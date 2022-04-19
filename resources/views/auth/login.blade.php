@@ -54,7 +54,7 @@
                                     @enderror
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" name="Password" class="input-text @error('email') is-invalid @enderror" placeholder="Password">
+                                    <input type="password" name="password" class="input-text @error('email') is-invalid @enderror" placeholder="Password">
                                     <i class="fa fa-lock"></i>
                                     @error('password')
                                         <span class="invalid-feedback text-start" role="alert"><strong>{{ $message }}</strong></span>
