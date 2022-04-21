@@ -61,10 +61,10 @@
     @include('layouts.partials.scripts')
 	<!-- scripts end -->
 	<script>
-		var _token = "{{ csrf_token(); }}";
+		var _token = "{{ csrf_token() }}";
 	</script>
 
-	@method('scripts')
+	@stack('scripts')
 </body>
 
 </html>

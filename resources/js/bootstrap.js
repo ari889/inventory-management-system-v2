@@ -1,7 +1,13 @@
 window._ = require('lodash');
 
 try {
-    require('bootstrap');
+    window.Popper = require('popper.js').default;
+    window.$ = window.jQuery = require('jquery');
+    window.Swal = require('sweetalert2');
+    require('moment');
+    require('../../node_modules/chart.js/dist/chart');
+    require('../../node_modules/dropify/dist/js/dropify');
+    require('../../node_modules/nestable2/jquery.nestable');
 } catch (e) {}
 
 /**

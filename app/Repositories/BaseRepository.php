@@ -29,9 +29,9 @@ class BaseRepository{
      */
     protected $startValue;
     /**
-     * datatable end value
+     * datatable length value
      */
-    protected $endValue;
+    protected $lengthValue;
 
     /**
      * load model on construct

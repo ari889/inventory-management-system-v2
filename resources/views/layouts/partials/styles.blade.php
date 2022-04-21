@@ -15,3 +15,5 @@
 <link rel="stylesheet" href="assets/css/semi-dark.css" />
 <link rel="stylesheet" href="assets/css/header-colors.css" />
 <link rel="stylesheet" href="css/app.css" />
+<link rel="stylesheet" href="css/bootstrap-select.min.css" />
+<link rel="stylesheet" href="css/datatables.bundle.css" />
