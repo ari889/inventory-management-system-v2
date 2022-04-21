@@ -45,7 +45,7 @@ class MenuService extends BaseService{
                 /**
                  * menu builder link
                  */
-                $action .= '<a href="#" class="dropdown-item"><i class="fas fa-th-list text-success"></i> Builder</a>';
+                $action .= '<a href="'.route('menu.builder', ["id" => $value->id]).'" class="dropdown-item"><i class="fas fa-th-list text-success"></i> Builder</a>';
 
                 /**
                  * menu edit link

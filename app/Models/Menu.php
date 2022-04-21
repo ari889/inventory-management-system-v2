@@ -18,6 +18,6 @@ class Menu extends Model
      * menuItems with module one to many relationship
      */
     public function menuItems(){
-        return $this->model(Module::class)->doesntHave('parent')->orderBy('order', 'asc');
+        return $this->hasMany(Module::class)->doesntHave('parent')->orderBy('order', 'asc');
     }
 }
