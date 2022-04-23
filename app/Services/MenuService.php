@@ -47,23 +47,31 @@ class MenuService extends BaseService{
                 /**
                  * menu builder link
                  */
-                $action .= '<a href="'.route('menu.builder', ["id" => $value->id]).'" class="dropdown-item"><i class="fas fa-th-list text-success"></i> Builder</a>';
+                if(permission('menu-builder')){
+                    $action .= '<a href="'.route('menu.builder', ["id" => $value->id]).'" class="dropdown-item"><i class="fas fa-th-list text-success"></i> Builder</a>';
+                }
 
                 /**
                  * menu edit link
                  */
-                $action .= '<a href="#" class="dropdown-item edit_data" data-id="'.$value->id.'"><i class="fas fa-edit text-primary"></i> Edit</a>';
+                if(permission('menu-edit')){
+                    $action .= '<a href="#" class="dropdown-item edit_data" data-id="'.$value->id.'"><i class="fas fa-edit text-primary"></i> Edit</a>';
+                }
 
                 /**
                  * menu delete link
                  */
-                if($value->deletable == 1){
-                    $action .= '<a href="#" class="dropdown-item delete_data" data-id="'.$value->id.'" data-name="'.$value->menu_name.'"><i class="fas fa-trash text-danger"></i> Delete</a>';
+                if(permission('menu-delete')){
+                    if($value->deletable == 1){
+                        $action .= '<a href="#" class="dropdown-item delete_data" data-id="'.$value->id.'" data-name="'.$value->menu_name.'"><i class="fas fa-trash text-danger"></i> Delete</a>';
+                    }
                 }
 
 
                 $row = [];
-                $row[] = ($value->deletable == 1) ? table_checkbox($value->id) : '';
+                if(permission('menu-bulk-delete')){
+                    $row[] = ($value->deletable == 1) ? table_checkbox($value->id) : '';
+                }
                 $row[] = $no;
                 $row[] = $value->menu_name;
                 $row[] = DELETABLE[$value->deletable];

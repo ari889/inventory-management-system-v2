@@ -18,6 +18,7 @@ Auth::routes(['register' => false]);
 Route::group(['middleware' => ['auth']], function(){
     // dashboard route
     Route::get('/', 'HomeController@index')->name('dashboard');
+    Route::get('unauthorized', 'HomeController@unauthorized')->name('unauthorized');
 
     // menu route
     Route::get('menu', 'MenuController@index')->name('menu');

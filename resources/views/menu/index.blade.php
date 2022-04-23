@@ -23,9 +23,11 @@
         <div class="card-body">
             <div class="d-flex flex-row justify-content-between align-items-center">
                 <h5 class="card-title"><i class="{{ $page_icon }} text-primary"></i> {{ $page_title }}</h5>
-                <button type="button" class="btn btn-primary btn-sm" onclick="showFormModal('Add new menu', 'Save')">
-                    <i class="fas fa-plus-square"></i> Add New
-                </button>
+                @if(permission('menu-add'))
+                    <button type="button" class="btn btn-primary btn-sm" onclick="showFormModal('Add new menu', 'Save')">
+                        <i class="fas fa-plus-square"></i> Add New
+                    </button>
+                @endif
             </div>
             <form id="form-filter">
                 <div class="row">
@@ -43,12 +45,14 @@
             <table id="dataTable" class="table table-stripped table-bordered table-hover">
                 <thead class="bg-primary">
                     <tr>
-                        <th>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="select_all" onchange="select_all()">
-                                <label for="" class="custom-control-label" id="select_all"></label>
-                            </div>
+                        @if(permission('menu-bulk-delete'))
+                            <th>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="select_all" onchange="select_all()">
+                                    <label for="" class="custom-control-label" id="select_all"></label>
+                                </div>
                         </th>
+                        @endif
                         <th>SL</th>
                         <th>Menu Name</th>
                         <th>Datatable</th>
@@ -59,7 +63,12 @@
         </div>
     </div>
 </div>
-@include('menu.modal')
+
+<!-- menu add/edit modal start -->
+@if(permission('menu-edit') || permission('menu-add'))
+    @include('menu.modal')
+@endif
+<!-- menu add/edit modal end -->
 @endsection
 
 @push('scripts')
@@ -94,12 +103,20 @@
                 },
                 "columnDefs" : [
                     {
+                        @if(permission('menu-bulk-delete'))
                         "targets" : [0, 4],
+                        @else
+                        "targets" : [3],
+                        @endif
                         "orderable" : false,
                         "className" : "text-center"
                     },
                     {
-                        "targets" : [1,3],
+                        @if(permission('menu-bulk-delete'))
+                        "targets" : [1, 3],
+                        @else
+                        "targets" : [0, 2],
+                        @endif
                         "className" : "text-center"
                     }
                 ],
@@ -107,6 +124,7 @@
                 "<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'<'float-right'p>>>",
                 "buttons" : [
+                    @if(permission('menu-report'))
                     {
                         "extend" : "colvis",
                         "className" : "btn btn-secondary btn-sm text-white",
@@ -163,6 +181,8 @@
                             columns : [1, 2, 3]
                         },
                     },
+                    @endif
+                    @if(permission('menu-bulk-delete'))
                     {
                         "className" : "btn btn-danger btn-sm delete_btn d-none text-white",
                         "text" : "Delete",
@@ -170,6 +190,7 @@
                             multi_delete();
                         }
                     }
+                    @endif
                 ]
             });
             

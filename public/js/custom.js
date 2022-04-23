@@ -99,7 +99,7 @@ function store_or_update_data(table, method, url, formData) {
                     $('#store_or_update_form input#' + key).addClass('is-invalid');
                     $('#store_or_update_form textarea#' + key).addClass('is-invalid');
                     $('#store_or_update_form select#' + key).parent().addClass('is-invalid');
-                    $('#store_or_update_form select#' + key).parent().append(
+                    $('#store_or_update_form #' + key).parent().append(
                         '<small class="error text-danger">' + value + '</small>'
                     )
                 });
