@@ -17,7 +17,7 @@ class ModuleRepository extends BaseRepository{
      * get module list
      */
     public function module_list(int $menu_id){
-        $modules = $this->models->orderBy('order', 'asc')
+        $modules = $this->model->orderBy('order', 'asc')
         ->where(['type' => 2, 'menu_id' => $menu_id])
         ->get()
         ->nest()

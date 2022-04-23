@@ -29,26 +29,32 @@ class PermissionRepository extends BaseRepository{
     }
 
     /**
+     * search permission by name
+     */
+    public function setName($name){
+        $this->name = $name;
+    }
+
+    /**
      * set datatable query
      */
     public function get_datatable_query(){
         /**
          * set menu column order asc or desc
          */
-        if(permission('menu-bulk-delete')){
-            $this->column_order = [null, 'id', 'menu_name', 'deletable', null];
-        }else{
-            $this->column_order = ['id', 'menu_name', 'deletable', null];
-        }
+        $this->column_order = [null, 'id', 'menu_name', 'deletable', null];
 
-        $query = $this->model->toBase();
+        $query = $this->model->with('module:id,module_name');
 
         /*******************
          * * Search Data **
          *******************/
 
-         if(!empty($this->menu_name)){
-             $query->where('menu_name', 'like', '%'.$this->menu_name.'%');
+         if(!empty($this->module_id)){
+             $query->where('module_id', $this->module_id);
+         }
+         if(!empty($this->name)){
+             $query->where('name', 'like', '%'.$this->module_id.'%');
          }
 
          /**
@@ -90,10 +96,10 @@ class PermissionRepository extends BaseRepository{
     }
 
     /**
-     * get data with menuitems
+     * get session permission list
      */
-    public function withMenuItems($id){
-        return $this->model->with('menuItems')->findOrFail($id);
+    public function session_permission_list(){
+        return $this->model->select('slug')->get();
     }
 
     

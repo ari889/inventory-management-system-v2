@@ -5,6 +5,7 @@ namespace App\Services;
 
 use Illuminate\Http\Request;
 use App\Repositories\MenuRepository as Menu;
+use App\Repositories\ModuleRepository as Module;
 use Carbon\Carbon;
 
 class MenuService extends BaseService{
@@ -15,9 +16,10 @@ class MenuService extends BaseService{
     protected $menu;
     protected $module;
 
-    public function __construct(Menu $menu)
+    public function __construct(Menu $menu, Module $module)
     {
         $this->menu = $menu;
+        $this->module = $module;
     }
 
     /**
@@ -107,6 +109,21 @@ class MenuService extends BaseService{
      */
     public function bulk_delete(Request $request){
         return $this->menu->destroy($request->ids);
+    }
+
+    /**
+     * set new order module in database
+     */
+    public function orderMenu(array $menuItems, $parent_id){
+        foreach($menuItems as $index => $menuItem){
+            $item = $this->module->findOrFail($menuItem->id);
+            $item->order = $index + 1;
+            $item->parent_id = $parent_id;
+            $item->save();
+            if(isset($menuItem->children)){
+                $this->orderMenu($menuItem->children, $item->id);
+            }
+        }
     }
 
 

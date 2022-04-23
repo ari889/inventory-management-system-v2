@@ -4,16 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MenuFormRequest;
 use App\Services\MenuService;
+use App\Services\ModuleService;
 use Illuminate\Http\Request;
 use PDO;
 
 class MenuController extends BaseController
 {
-    protected $service;
-
-    public function __construct(MenuService $menu)
+    /**
+     * load menu and module service
+     */
+    protected $module;
+    public function __construct(MenuService $menu, ModuleService $module)
     {
         $this->service = $menu;
+        $this->module = $module;
     }
 
     
@@ -100,6 +104,15 @@ class MenuController extends BaseController
         }else{
             return $this->response_json($status='error',$message=null,$data=null,$response_code=401);
         }
+    }
+
+    /**
+     * re arrange menu
+     */
+    public function orderItem(Request $request){
+        $menuItemOrder = json_decode($request->input('order'));
+        $this->service->orderMenu($menuItemOrder, null);
+        $this->module->restore_session_module();
     }
 
 }

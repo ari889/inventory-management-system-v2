@@ -36,6 +36,19 @@ Route::group(['middleware' => ['auth']], function(){
             Route::post('store-or-update', 'ModuleController@store_or_update')->name('store.or.update');
             Route::get('{menu}/edit/{module}', 'ModuleController@edit')->name('edit');
             Route::delete('delete/{module}', 'ModuleController@destroy')->name('delete');
+
+            /**
+             * module permission routes
+             */
+            Route::get('permission', 'PermissionController@index')->name('permission');
+            Route::group(['prefix' => 'permission', 'as' => 'permission.'], function(){
+                Route::post('datatable-data', 'PermissionController@get_datatable_data')->name('datatable.data');
+                Route::post('store', 'PermissionController@store')->name('store');
+                Route::post('update', 'PermissionController@update')->name('update');
+                Route::post('edit', 'PermissionController@edit')->name('edit');
+                Route::post('delete', 'PermissionController@delete')->name('delete');
+                Route::post('bulk-delete', 'PermissionController@bulk_delete')->name('bulk.delete');
+            });
         });
     });
 });
