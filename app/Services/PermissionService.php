@@ -60,16 +60,23 @@ class PermissionService extends BaseService{
                 /**
                  * menu edit link
                  */
-                $action .= '<a href="#" class="dropdown-item edit_data" data-id="'.$value->id.'"><i class="fas fa-edit text-primary"></i> Edit</a>';
+                if(permission('permission-edit')){
+                    $action .= '<a href="#" class="dropdown-item edit_data" data-id="'.$value->id.'"><i class="fas fa-edit text-primary"></i> Edit</a>';
+                }
+                
 
                 /**
                  * menu delete link
                  */
-                $action .= '<a href="#" class="dropdown-item delete_data" data-id="'.$value->id.'" data-name="'.$value->name.'"><i class="fas fa-trash text-danger"></i> Delete</a>';
+                if(permission('permission-delete')){
+                    $action .= '<a href="#" class="dropdown-item delete_data" data-id="'.$value->id.'" data-name="'.$value->name.'"><i class="fas fa-trash text-danger"></i> Delete</a>';
+                }
 
 
                 $row = [];
-                $row[] = table_checkbox($value->id);
+                if(permission('permission-bulk-delete')){
+                    $row[] = table_checkbox($value->id);
+                }
                 $row[] = $no;
                 $row[] = $value->module->module_name;
                 $row[] = $value->name;
@@ -145,7 +152,13 @@ class PermissionService extends BaseService{
      * bulk delete data from database
      */
     public function bulk_delete(Request $request){
-        return $this->permission->destroy($request->ids);
+        $result = $this->permission->destroy($request->ids);
+        if($result){
+            if(auth()->user()->id == 1){
+                $this->restore_session_permission_list();
+            }
+        }
+        return $result;
     }
 
     /**

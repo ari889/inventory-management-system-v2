@@ -52,6 +52,16 @@ Route::group(['middleware' => ['auth']], function(){
             });
         });
     });
+
+     // role route
+     Route::get('role', 'roleController@index')->name('role');
+     Route::group(['prefix' => 'role', 'as' => 'role.'], function(){
+         Route::post('datatable-data', 'roleController@get_datatable_data')->name('datatable.data');
+         Route::post('store-or-update', 'roleController@store_or_update')->name('store.or.update');
+         Route::post('edit', 'roleController@edit')->name('edit');
+         Route::post('delete', 'roleController@delete')->name('delete');
+         Route::post('bulk-delete', 'roleController@bulk_delete')->name('bulk.delete');
+     });
 });
 
 

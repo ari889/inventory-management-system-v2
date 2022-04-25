@@ -23,9 +23,11 @@
         <div class="card-body">
             <div class="d-flex flex-row justify-content-between align-items-center">
                 <h5 class="card-title"><i class="{{ $page_icon }} text-primary"></i> {{ $page_title }}</h5>
+                @if(permission('permission-add'))
                 <button type="button" class="btn btn-primary btn-sm" onclick="showFormModal('Add new menu', 'Save')">
                     <i class="fas fa-plus-square"></i> Add New
                 </button>
+                @endif
             </div>
             <form id="form-filter">
                 <div class="row">
@@ -54,12 +56,14 @@
             <table id="dataTable" class="table table-stripped table-bordered table-hover mt-3">
                 <thead class="bg-primary">
                     <tr>
+                        @if(permission('permission-bulk-delete'))
                         <th>
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="select_all" onchange="select_all()">
                                 <label for="" class="custom-control-label" id="select_all"></label>
                             </div>
                         </th>
+                        @endif
                         <th>SL</th>
                         <th>Module Name</th>
                         <th>Permission Name</th>
@@ -71,8 +75,18 @@
         </div>
     </div>
 </div>
-@include('permission.modal')
-@include('permission.edit-modal')
+
+<!-- permission add modal start -->
+@if(permission('permission-add'))
+    @include('permission.modal')
+@endif
+<!-- permission add modal end -->
+
+<!-- permission edit modal start -->
+@if(permission('permission-edit'))
+    @include('permission.edit-modal')
+@endif
+<!-- permission edit modal end -->
 @endsection
 
 @push('scripts')
@@ -108,12 +122,20 @@
                 },
                 "columnDefs" : [
                     {
+                        @if(permission('permission-bulk-delete'))
                         "targets" : [0, 5],
+                        @else
+                        "targets" : [4],
+                        @endif
                         "orderable" : false,
                         "className" : "text-center"
                     },
                     {
+                        @if(permission('permission-bulk-delete'))
                         "targets" : [1],
+                        @else
+                        "targets": [0],
+                        @endif
                         "className" : "text-center"
                     }
                 ],
@@ -121,6 +143,7 @@
                 "<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'<'float-right'p>>>",
                 "buttons" : [
+                    @if(permission('permission-report'))
                     {
                         "extend" : "colvis",
                         "className" : "btn btn-secondary btn-sm text-white",
@@ -177,6 +200,8 @@
                             columns : [1, 2, 3, 4]
                         },
                     },
+                    @endif
+                    @if(permission('permission-bulk-delete'))
                     {
                         "className" : "btn btn-danger btn-sm delete_btn d-none text-white",
                         "text" : "Delete",
@@ -184,6 +209,7 @@
                             multi_delete();
                         }
                     }
+                    @endif
                 ]
             });
             

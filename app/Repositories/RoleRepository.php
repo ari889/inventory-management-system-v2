@@ -2,21 +2,19 @@
 
 namespace App\Repositories;
 
-use App\Models\Permission;
+use App\Models\Role;
 
-
-class PermissionRepository extends BaseRepository{
-
+class RoleRepository extends BaseRepository{
     /**
      * set column order
      */
     protected $order = array('id' => 'desc');
-    protected $menu_name;
+    protected $name;
 
     /**
      * fil model property from BaseRepository class
      */
-    public function __construct(Permission $model)
+    public function __construct(Role $model)
     {
         $this->model = $model;
     }
@@ -24,15 +22,8 @@ class PermissionRepository extends BaseRepository{
     /**
      * search datatable based on menu name
      */
-    public function setModuleID($module_id){
-        $this->module_id = $module_id;
-    }
-
-    /**
-     * search permission by name
-     */
-    public function setName($name){
-        $this->name = $name;
+    public function setRoleName($role_name){
+        $this->role_name = $role_name;
     }
 
     /**
@@ -42,23 +33,20 @@ class PermissionRepository extends BaseRepository{
         /**
          * set menu column order asc or desc
          */
-        if(permission('permission-bulk-delete')){
-            $this->column_order = [null, 'id', 'menu_name', 'deletable', null];
+        if(permission('role-bulk-delete')){
+            $this->column_order = [null, 'id', 'name', 'deletable', null];
         }else{
             $this->column_order = ['id', 'menu_name', 'deletable', null];
         }
 
-        $query = $this->model->with('module:id,module_name');
+        $query = $this->model->toBase();
 
         /*******************
          * * Search Data **
          *******************/
 
-         if(!empty($this->module_id)){
-             $query->where('module_id', $this->module_id);
-         }
-         if(!empty($this->name)){
-             $query->where('name', 'like', '%'.$this->module_id.'%');
+         if(!empty($this->role_name)){
+             $query->where('role_name', 'like', '%'.$this->role_name.'%');
          }
 
          /**
@@ -98,14 +86,4 @@ class PermissionRepository extends BaseRepository{
     public function count_all(){
         return $this->model->toBase()->get()->count();
     }
-
-    /**
-     * get session permission list
-     */
-    public function session_permission_list(){
-        return $this->model->select('slug')->get();
-    }
-
-    
-
 }

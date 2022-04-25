@@ -6,7 +6,6 @@ use App\Http\Requests\MenuFormRequest;
 use App\Services\MenuService;
 use App\Services\ModuleService;
 use Illuminate\Http\Request;
-use PDO;
 
 class MenuController extends BaseController
 {
@@ -29,7 +28,7 @@ class MenuController extends BaseController
             $this->setPageData('Menu', 'Menu', 'fas fa-th-list');
             return view('menu.index');
         }else{
-            $this->unauthorized_access_blocked();
+            return $this->unauthorized_access_blocked();
         }
     }
 
@@ -46,7 +45,7 @@ class MenuController extends BaseController
     
             return response()->json($output);
         }else{
-            $this->unauthorized_access_blocked();
+            return $this->unauthorized_access_blocked();
         }
     }
 
@@ -66,7 +65,7 @@ class MenuController extends BaseController
                 return $this->response_json($status='error',$message=null,$data=null,$response_code=401);
             }
         }else{
-            $this->unauthorized_access_blocked();
+            return $this->unauthorized_access_blocked();
         }
     }
 
@@ -86,7 +85,7 @@ class MenuController extends BaseController
                 return $this->response_json($status='error',$message=null,$data=null,$response_code=401);
             }
         }else{
-            $this->unauthorized_access_blocked();
+            return $this->unauthorized_access_blocked();
         }
     }
 
@@ -106,7 +105,7 @@ class MenuController extends BaseController
                 return $this->response_json($status='error',$message=null,$data=null,$response_code=401);
             }
         }else{
-            $this->unauthorized_access_blocked();
+            return $this->unauthorized_access_blocked();
         }
     }
 
@@ -126,7 +125,7 @@ class MenuController extends BaseController
                 return $this->response_json($status='error',$message=null,$data=null,$response_code=401);
             }
         }else{
-            $this->unauthorized_access_blocked();
+            return $this->unauthorized_access_blocked();
         }
     }
 
