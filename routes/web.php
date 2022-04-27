@@ -54,13 +54,25 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
      // role route
-     Route::get('role', 'roleController@index')->name('role');
+     Route::get('role', 'RoleController@index')->name('role');
      Route::group(['prefix' => 'role', 'as' => 'role.'], function(){
-         Route::post('datatable-data', 'roleController@get_datatable_data')->name('datatable.data');
-         Route::post('store-or-update', 'roleController@store_or_update')->name('store.or.update');
-         Route::post('edit', 'roleController@edit')->name('edit');
-         Route::post('delete', 'roleController@delete')->name('delete');
-         Route::post('bulk-delete', 'roleController@bulk_delete')->name('bulk.delete');
+         Route::post('datatable-data', 'RoleController@get_datatable_data')->name('datatable.data');
+         Route::post('store-or-update', 'RoleController@store_or_update')->name('store.or.update');
+         Route::post('edit', 'RoleController@edit')->name('edit');
+         Route::post('delete', 'RoleController@delete')->name('delete');
+         Route::post('bulk-delete', 'RoleController@bulk_delete')->name('bulk.delete');
+     });
+
+     // user routes
+     Route::get('user', 'UserController@index')->name('user');
+     Route::group(['prefix' => 'user', 'as' => 'user.'], function(){
+         Route::post('datatable-data', 'UserController@get_datatable_data')->name('datatable.data');
+         Route::post('store-or-update', 'UserController@store_or_update')->name('store.or.update');
+         Route::post('edit', 'UserController@edit')->name('edit');
+         Route::post('show', 'UserController@show')->name('show');
+         Route::post('delete', 'UserController@delete')->name('delete');
+         Route::post('bulk-delete', 'UserController@bulk_delete')->name('bulk.delete');
+         Route::post('change-status', 'UserController@change_status')->name('change.status');
      });
 });
 

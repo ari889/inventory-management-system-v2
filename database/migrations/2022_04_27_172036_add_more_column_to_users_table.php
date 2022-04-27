@@ -15,7 +15,7 @@ class AddMoreColumnToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->unsignedBigInteger('role_id')->after('id');
-            $table->foreign('role_id')->references('id')->on('users');
+            $table->foreign('role_id')->references('id')->on('roles');
             $table->string('avatar', 255)->nullable()->after('email');
             $table->string('mobile_no', 255)->nullable()->after('avatar');
             $table->enum('gender', [1, 2])->comment('1=Male,2=Female')->after('mobile_no');

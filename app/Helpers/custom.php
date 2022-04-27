@@ -47,3 +47,35 @@ if(!function_exists('action_button')){
         ';
     }
 }
+
+/**
+ * user gender
+ */
+define('GENDER', ['1' => 'Male', '2' => 'Female']);
+
+/**
+ * set user status label
+ */
+define('STATUS_LABEL', [
+    '1' => '<span class="badge bg-success">Active</span>',
+    '2' => '<span class="badge bg-danger">Inactive</span>'
+]);
+define('STATUS', [
+    '1' => 'Active',
+    '2' => 'Inactive'
+]);
+
+/**
+ * user avatar path
+ */
+define('USER_AVATAR_PATH', 'user/');
+
+/**
+ * change status label
+ */
+if(!function_exists('change_status')){
+    function change_status(int $id,int $status,string $name = null){
+        return $status == 1 ? '<span class="badge bg-success change_status" data-id="' . $id . '" data-name="' . $name . '" data-status="2" style="cursor:pointer;">Active</span>' : 
+        '<span class="badge bg-danger change_status" data-id="' . $id . '" data-name="' . $name . '" data-status="1" style="cursor:pointer;">Inactive</span>';
+    }
+}

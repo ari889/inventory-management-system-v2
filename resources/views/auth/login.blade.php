@@ -1,109 +1,133 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
-<!-- Mirrored from uiwebsoft.com/justlog/login-nine/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 29 Aug 2020 00:36:10 GMT -->
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>JustLog - Login</title>
-    <!-- External CSS -->
-    <link type="text/css" rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <link type="text/css" rel="stylesheet" href="../assets/fonts/font-awesome/css/font-awesome.min.css">
-
-    <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/fev.png">
-
-    <!-- Custom Stylesheet -->
-    <link type="text/css" rel="stylesheet" href="css/app.css">
-    <link type="text/css" rel="stylesheet" href="css/login-nine.css">
-
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--favicon-->
+    <link rel="icon" href="assets/images/favicon-32x32.png" type="image/png" />
+    <!--plugins-->
+    <link href="assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
+    <link href="assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" />
+    <link href="assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet" />
+    <!-- loader-->
+    <link href="assets/css/pace.min.css" rel="stylesheet" />
+    <script src="assets/js/pace.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/app.css" rel="stylesheet">
+    <link href="assets/css/icons.css" rel="stylesheet">
+    <title>Rukada - Responsive Bootstrap 5 Admin Template</title>
 </head>
 
-<body>
-
-    <!-- Loader -->
-    <div class="loader">
-        <div class="loader_div"></div>
-    </div>
-
-    <!-- Login page -->
-    <div class="login_wrapper">
-        <div class="row no-gutters">
-
-            <div class="col-md-6 mobile-hidden">
-                <div class="login_left">
-                    <div class="login_left_img"><img src="assets/images/login-bg.jpg" alt="login background"></div>
-                </div>
-            </div>
-            <div class="col-md-6 bg-white" style="z-index: 1;">
-                <div class="login_box">
-                    <a href="#" class="logo_text">
-                        <span>JL</span> Just Log
-                    </a>
-                    <div class="login_form">
-                        <div class="login_form_inner">
-                            <form action="{{ route('login') }}" method="POST">
-                                @csrf
-                                <div class="form-group">
-                                    <input type="email" name="email" class="input-text @error('email') is-invalid @enderror" placeholder="Email Address" value="{{ old('email') }}">
-                                    <i class="fa fa-envelope"></i>
-                                    @error('email')
-                                        <span class="invalid-feedback text-start" role="alert"><strong>{{ $message }}</strong></span>
-                                    @enderror
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" name="password" class="input-text @error('email') is-invalid @enderror" placeholder="Password">
-                                    <i class="fa fa-lock"></i>
-                                    @error('password')
-                                        <span class="invalid-feedback text-start" role="alert"><strong>{{ $message }}</strong></span>
-                                    @enderror
-                                </div>
-                                <div class="checkbox clearfix">
-                                    <div class="form-check checkbox-theme ps-0">
-                                        <input class="form-check-input" type="checkbox" {{ old('remember') ? 'checked' : '' }} name="remember" id="remember">
-                                        <label class="form-check-label" for="remember">
-                                            Remember me
-                                        </label>
+<body class="bg-login">
+    <!--wrapper-->
+    <div class="wrapper">
+        <div class="section-authentication-signin d-flex align-items-center justify-content-center my-5 my-lg-0">
+            <div class="container-fluid">
+                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
+                    <div class="col mx-auto">
+                        <div class="mb-4 text-center">
+                            <img src="assets/images/logo-img.png" width="180" alt="" />
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="border p-4 rounded">
+                                    <div class="text-center">
+                                        <h3 class="">Sign in</h3>
                                     </div>
-                                    @if (Route::has('password.request'))
-                                    <a href="{{ route('password.request') }}">Forgot Password</a>
-                                    @endif
+                                    <div class="login-separater text-center mb-4"> <span>SIGN IN WITH EMAIL</span>
+                                        <hr />
+                                    </div>
+                                    <div class="form-body">
+                                        <form action="{{ route('login') }}" method="POST" class="row g-3">
+                                            @csrf
+                                            <div class="col-12">
+                                                <label for="email" class="form-label">Email Address</label>
+                                                <input type="email"
+                                                    class="form-control @error('email') is-invalid @enderror"
+                                                    name="email" id="email" placeholder="Email Address">
+                                                @error('email')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-12">
+                                                <label for="password" class="form-label">Enter Password</label>
+                                                <div class="input-group" id="show_hide_password">
+                                                    <input type="password" name="password"
+                                                        class="form-control border-end-0 @error('password') is-invalid @enderror"
+                                                        id="password" value="" placeholder="Enter Password"> <a
+                                                        href="javascript:;" class="input-group-text bg-transparent"><i
+                                                            class='bx bx-hide'></i></a>
+                                                    @error('password')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                </div>
+                                                @enderror
+                                            </div>
+                                            <div class="row my-3">
+                                                <div class="col-md-6">
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" name="remember" type="checkbox"
+                                                            id="remember" checked>
+                                                        <label class="form-check-label" for="remember">Remember Me</label>
+                                                    </div>
+                                                </div>
+                                                @if(Route::has('password.request'))
+                                                <div class="col-md-6 text-end">
+                                                    <a href="{{ route('password.request') }}">Forgot Password ?</a>
+                                                </div>
+                                                @endif
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="d-grid">
+                                                    <button type="submit" class="btn btn-primary"><i
+                                                            class="bx bxs-lock-open"></i>Sign in</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn-md btn-theme btn-block">Login</button>
-                                </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <!--end row-->
             </div>
         </div>
-
     </div>
-    <!-- /. Login page -->
-
-
-    <!-- External JS libraries -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
-        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-
-    <!-- Custom JS Script -->
-    <script type="text/javascript">
-        var $window = $(window);
-
-        // :: Preloader Active Code
-        $window.on('load', function () {
-            $('.loader').fadeOut('slow', function () {
-                $(this).remove();
+    <!--end wrapper-->
+    <!-- Bootstrap JS -->
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <!--plugins-->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/plugins/simplebar/js/simplebar.min.js"></script>
+    <script src="assets/plugins/metismenu/js/metisMenu.min.js"></script>
+    <script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+    <!--Password show & hide js -->
+    <script>
+        $(document).ready(function () {
+            $("#show_hide_password a").on('click', function (event) {
+                event.preventDefault();
+                if ($('#show_hide_password input').attr("type") == "text") {
+                    $('#show_hide_password input').attr('type', 'password');
+                    $('#show_hide_password i').addClass("bx-hide");
+                    $('#show_hide_password i').removeClass("bx-show");
+                } else if ($('#show_hide_password input').attr("type") == "password") {
+                    $('#show_hide_password input').attr('type', 'text');
+                    $('#show_hide_password i').removeClass("bx-hide");
+                    $('#show_hide_password i').addClass("bx-show");
+                }
             });
         });
 
     </script>
-
+    <!--app JS-->
+    <script src="assets/js/app.js"></script>
 </body>
-
-<!-- Mirrored from uiwebsoft.com/justlog/login-nine/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 29 Aug 2020 00:36:12 GMT -->
 
 </html>

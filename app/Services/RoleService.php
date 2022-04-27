@@ -20,6 +20,13 @@ class RoleService extends BaseService{
     }
 
     /**
+     * get all roles
+     */
+    public function index(){
+        return $this->role->all();
+    }
+
+    /**
      * get datatable data from menu repository
      */
     public function get_datatable_data(Request $request){
