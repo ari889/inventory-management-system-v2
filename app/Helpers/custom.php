@@ -69,6 +69,14 @@ define('STATUS', [
  * user avatar path
  */
 define('USER_AVATAR_PATH', 'user/');
+/**
+ * logo path
+ */
+define('LOGO_PATH', 'logo/');
+/**
+ * logo path
+ */
+define('FAVICON_PATH', 'favicon/');
 
 /**
  * change status label
@@ -79,3 +87,13 @@ if(!function_exists('change_status')){
         '<span class="badge bg-danger change_status" data-id="' . $id . '" data-name="' . $name . '" data-status="1" style="cursor:pointer;">Inactive</span>';
     }
 }
+
+/**
+ * mailer
+ */
+define('MAIL_MAILER', ['smtp', 'sendmail', 'mail']);
+
+/**
+ * mail encryption
+ */
+define('MAIL_ENCRYPTION', ['NONE' => 'null', 'TLS' => 'tls', 'SSL' => 'ssl']);

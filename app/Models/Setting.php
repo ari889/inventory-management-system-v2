@@ -2,10 +2,39 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
-    use HasFactory;
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['name', 'value'];
+
+    /**
+     * get setting data
+     */
+    public static function get($name){
+        $setting = new self();
+        $entry = $setting->where('name', $name)->first();
+        if(!$entry){
+            return;
+        }
+        return $entry->value;
+    }
+
+    /**
+     * update or create setting data
+     */
+    public static function set($name, $value=null){
+        self::updateOrCreate(['name' => $name], ['name' => $name, 'value' => $value]);
+        Config::set('name', $value);
+        if(Config::get($name) == $value){
+            return true;
+        }
+        return false;
+    }
 }

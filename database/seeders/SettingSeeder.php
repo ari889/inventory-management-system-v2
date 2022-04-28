@@ -16,7 +16,7 @@ class SettingSeeder extends Seeder
 
         ['name'=>'currency_code','value'=>'BDT'],
         ['name'=>'currency_symbol','value'=>'Tk'],
-        ['name'=>'currency_position','value'=>'right'],
+        ['name'=>'currency_position','value'=>'suffix'],
 
         ['name'=>'invoice_prefix','value'=>'INV-'],
         ['name'=>'invoice_number','value'=>'00001'],
