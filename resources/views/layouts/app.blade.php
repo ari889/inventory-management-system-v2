@@ -10,7 +10,7 @@
 	<meta name="description" content="Wieldy - A fully responsive, HTML5 based admin template">
 	<meta name="keywords" content="Responsive, HTML5, admin theme, business, professional, jQuery, web design, CSS3, sass">
     <!--favicon-->
-    <link rel="icon" href="assets/images/favicon-32x32.png" type="image/png" />
+    <link rel="icon" href="storage/{{ FAVICON_PATH.config('settings.favicon') }}" type="image/png" />
 
 	<meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- stylesheets start -->

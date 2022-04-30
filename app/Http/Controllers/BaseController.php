@@ -47,6 +47,6 @@ class BaseController extends Controller
      * no access without permission / unauthorized access blocked
      */
     protected function unauthorized_access_blocked(){
-        redirect()->route('unauthorized');
+        return redirect()->route('unauthorized');
     }
 }

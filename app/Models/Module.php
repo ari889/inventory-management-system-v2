@@ -40,7 +40,7 @@ class Module extends Model
      */
     public function children(){
         $query = $this->hasMany(Module::class, 'parent_id', 'id');
-        if(auth()->user()->role_id != null){
+        if(auth()->user()->role_id != 1){
             $role_id = auth()->user()->role_id;
             $query->whereHas('module_role', function($q) use ($role_id){
                 $q->where('role_id', $role_id);
@@ -56,7 +56,7 @@ class Module extends Model
     public function submenu(){
         return $this->hasMany(Module::class, 'parent_id', 'id')
                     ->orderBy('order', 'asc')
-                    ->with('permission:id.module_id,name');
+                    ->with('permission:id,module_id,name');
     }
 
     /**

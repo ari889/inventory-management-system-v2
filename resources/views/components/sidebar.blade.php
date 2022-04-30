@@ -1,10 +1,7 @@
 <div class="sidebar-wrapper" data-simplebar="true">
     <div class="sidebar-header">
         <div>
-            <img src="assets/images/logo-icon.png" class="logo-icon" alt="logo icon">
-        </div>
-        <div>
-            <h4 class="logo-text">Rukada</h4>
+            <img src="storage/{{ LOGO_PATH.config('settings.logo') }}" class="logo-icon" alt="logo icon">
         </div>
         <div class="toggle-icon ms-auto"><i class='bx bx-arrow-to-left'></i>
         </div>
@@ -18,7 +15,7 @@
                     <li class="menu-label">{{ $menu->divider_title }}</li>
                     @else
                     <li {{ request()->is($menu->url) ? 'class="mm-active"' : '' }}>
-                        <a href="{{ $menu->url ? url($menu->url) : 'javascript.void();' }}">
+                        <a href="{{ $menu->url ? url($menu->url) : 'javascript:void(0)' }}">
                             <div class="parent-icon"><i class='{{ $menu->icon_class }}' style="font-size: 16px;"></i>
                             </div>
                             <div class="menu-title">{{ $menu->module_name }}</div>
@@ -26,23 +23,18 @@
                     </li>
                     @endif
                 @else
-                <li class="@foreach($menu->children as $submenu)
-                    {{ request()->is($submenu_url) ? 'mm-active' : '' }}
-                    @endforeach">
-                    <a href="javascript:;" class="has-arrow">
+                <li class="{{ request()->is($menu->url) ? 'mm-active' : '' }}">
+                    <a href="javascript:void(0)" class="has-arrow">
                         <div class="parent-icon"><i class='{{ $menu->icon_class }}' style="font-size: 16px;"></i>
                         </div>
                         <div class="menu-title">{{ $menu->module_name }}</div>
                     </a>
-                    <ul class="
-                    @foreach($menu->children as $submenu)
-                    {{ request()->is($submenu_url) ? 'mm-show mm-collapse' : '' }}
-                    @endforeach
-                    ">
+                    <ul>
                         @foreach($menu->children as $submenu)
-                        <li class="@foreach($menu->children as $submenu)
-                            {{ request()->is($submenu_url) ? 'mm-active' : '' }}
-                            @endforeach"> <a href="{{ $submenu->url ? url($submenu->url) : '' }}"><i class="{{ $submenu->icon_class }}" style="font-size: 16px;"></i>{{ $submenu->module_name }}</a>
+                        <li class="{{ request()->is($submenu->url) ? 'mm-active' : '' }}">
+                            <a href="{{ $submenu->url ? url($submenu->url) : 'javascript:void(0)' }}">
+                                <i class="{{ $submenu->icon_class }}" style="font-size: 16px;"></i>
+                                {{ $submenu->module_name }}</a>
                         </li>
                         @endforeach
                     </ul>

@@ -29,9 +29,9 @@ class ModuleFormRequest extends FormRequest
         }else{
             $rules['module_name'] = ['required', 'string'];
             if(request()->update_id){
-                $rules['url'] = ['required', 'string', 'unique:modules,url,'.request()->update_id];
+                $rules['url'] = ['nullable', 'string', 'unique:modules,url,'.request()->update_id];
             }else{
-                $rules['url'] = ['required', 'string', 'unique:modules,url'];
+                $rules['url'] = ['nullable', 'string', 'unique:modules,url'];
             }
             $rules['icon_class'] = ['nullable', 'string'];
             $rules['target'] = ['required', 'string'];

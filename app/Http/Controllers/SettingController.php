@@ -27,7 +27,7 @@ class SettingController extends BaseController
             }
             return view('setting.index', compact('zones_array'));
         }else{
-            $this->unauthorized_access_blocked();
+            return $this->unauthorized_access_blocked();
         }
     }
 
