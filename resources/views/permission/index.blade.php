@@ -29,6 +29,7 @@
                 </button>
                 @endif
             </div>
+            <hr>
             <form id="form-filter">
                 <div class="row">
                     <div class="col-md-4">

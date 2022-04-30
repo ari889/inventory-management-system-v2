@@ -24,6 +24,7 @@
             <div class="d-flex flex-row justify-content-between align-items-center">
                 <h5 class="card-title"><i class="{{ $page_icon }} text-primary"></i> {{ $page_title }}</h5>
             </div>
+            <hr>
             <ul class="nav nav-tabs nav-success mt-3" role="tablist">
                 <li class="nav-item" role="presentation">
                     <a class="nav-link active" data-bs-toggle="tab" href="#general" role="tab" aria-selected="true">

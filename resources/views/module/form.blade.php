@@ -28,7 +28,6 @@
                 </div>
             </div>
             <hr>
-
             <h5 class="mt-3">Manage Menu Module/Item</h5>
             <form action="{{ route('menu.module.store.or.update') }}" method="POST">
                 @csrf

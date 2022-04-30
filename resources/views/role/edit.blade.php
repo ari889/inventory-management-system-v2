@@ -24,7 +24,7 @@
             <div class="d-flex flex-row justify-content-between align-items-center">
                 <h5 class="card-title"><i class="{{ $page_icon }} text-primary"></i> {{ $page_title }}</h5>
             </div>
-
+            <hr>
             <form id="saveDataForm" method="POST">
                 @csrf
                 <input type="hidden" name="update_id" value="{{ $permission_data['role']->id }}" id="update_id">

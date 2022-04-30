@@ -1,4 +1,6 @@
 {
     "Base": true,
-    "Category": true
+    "Category": true,
+    "Brand": true,
+    "System": true
 }

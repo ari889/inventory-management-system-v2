@@ -77,6 +77,10 @@ define('LOGO_PATH', 'logo/');
  * logo path
  */
 define('FAVICON_PATH', 'favicon/');
+/**
+ * logo path
+ */
+define('BRAND_IMAGE_PATH', 'brand/');
 
 /**
  * change status label
@@ -97,3 +101,12 @@ define('MAIL_MAILER', ['smtp', 'sendmail', 'mail']);
  * mail encryption
  */
 define('MAIL_ENCRYPTION', ['NONE' => 'null', 'TLS' => 'tls', 'SSL' => 'ssl']);
+
+/**
+ * get datatable image path
+ */
+if(!function_exists('table_image')){
+    function table_image($path, $image=null, string $name){
+        return $image ? '<img src="storage/'.$path.$image.'" alt="'.$name.'" style="width: 50px;" />' : '<img src="images/default.svg" alt="Default Image" style="width: 50px;" />';
+    }
+}

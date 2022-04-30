@@ -28,7 +28,7 @@
                     <a href="{{ route('menu.module.create', ['menu' => $data['menu']->id]) }}" class="btn btn-primary btn-sm"><i class="fas fa-plus-square"></i> Add New</a>
                 </div>
             </div>
-
+            <hr>
             <div class="dd">
                 <x-menu-builder :menuItems="$data['menu']->menuItems" />
             </div>

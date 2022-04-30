@@ -23,8 +23,8 @@
         <div class="card-body">
             <div class="d-flex flex-row justify-content-between align-items-center">
                 <h5 class="card-title"><i class="{{ $page_icon }} text-primary"></i> {{ $page_title }}</h5>
-                @if(permission('category-add'))
-                <button type="button" class="btn btn-primary btn-sm" onclick="showFormModal('Add new category', 'Save')">
+                @if(permission('brand-add'))
+                <button type="button" class="btn btn-primary btn-sm" onclick="showFormModal('Add new brand', 'Save')">
                     <i class="fas fa-plus-square"></i> Add New
                 </button>
                 @endif
@@ -33,8 +33,8 @@
             <form id="form-filter">
                 <div class="row">
                     <div class="col-md-4">
-                        <label for="name" class="mb-2">Category Name</label>
-                        <input type="text" name="name" id="name" class="form-control" placeholder="Enter user name">
+                        <label for="title" class="mb-2">Brand Name</label>
+                        <input type="text" name="title" id="title" class="form-control" placeholder="Enter brand name">
                     </div>
                     <div class="col-md-4 clearfix pt-24">
                         <button type="button" class="btn btn-danger btn-sm float-end" id="btn-reset"
@@ -50,7 +50,7 @@
             <table id="dataTable" class="table table-stripped table-bordered table-hover">
                 <thead class="bg-primary">
                     <tr>
-                        @if(permission('category-bulk-delete'))
+                        @if(permission('brand-bulk-delete'))
                         <th>
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="select_all"
@@ -60,6 +60,7 @@
                         </th>
                         @endif
                         <th>SL</th>
+                        <th>Image</th>
                         <th>Name</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -71,13 +72,14 @@
 </div>
 
 <!-- menu add/edit modal start -->
-@if(permission('category-edit') || permission('category-add'))
-@include('category::modal')
+@if(permission('brand-edit') || permission('brand-add'))
+@include('system::brand.modal')
 @endif
 <!-- menu add/edit modal end -->
 @endsection
 
 @push('scripts')
+<script src="js/spartan-multi-image-picker-min.js"></script>
 <script>
     $(document).ready(function () {
         var table;
@@ -100,24 +102,24 @@
                 zeroRecords: '<strong class="text-danger">No data found</strong>'
             },
             "ajax": {
-                "url": "{{ route('category.datatable.data') }}",
+                "url": "{{ route('brand.datatable.data') }}",
                 "type": "POST",
                 "data": function (data) {
-                    data.name = $('#form-filter #name').val();
+                    data.title = $('#form-filter #title').val();
                     data._token = _token;
                 }
             },
             "columnDefs": [{
-                    @if(permission('category-bulk-delete'))
-                    "targets": [0, 4],
-                    @else "targets": [3],
+                    @if(permission('brand-bulk-delete'))
+                    "targets": [0, 5],
+                    @else "targets": [4],
                     @endif "orderable": false,
                     "className": "text-center"
                 },
                 {
-                    @if(permission('category-bulk-delete'))
-                    "targets": [1,3],
-                    @else "targets": [0,2],
+                    @if(permission('brand-bulk-delete'))
+                    "targets": [1,4],
+                    @else "targets": [0,3],
                     @endif "className": "text-center"
                 }
             ],
@@ -125,7 +127,7 @@
                 "<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'<'float-right'p>>>",
             "buttons": [
-                @if(permission('category-report')) {
+                @if(permission('brand-report')) {
                     "extend": "colvis",
                     "className": "btn btn-secondary btn-sm text-white",
                     "text": "Column"
@@ -134,7 +136,7 @@
                     "extend": "print",
                     "text": "Print",
                     "className": "btn btn-secondary btn-sm text-white float-end",
-                    "title": "Category List",
+                    "title": "Brand List",
                     "orientation": "landscape",
                     "pageSize": "A4",
                     "exportOptions": {
@@ -150,8 +152,8 @@
                     "extend": "csv",
                     "text": "CSV",
                     "className": "btn btn-secondary btn-sm text-white",
-                    "title": "Category List",
-                    "filename": "category-list",
+                    "title": "Brand List",
+                    "filename": "brand-list",
                     "exportOptions": {
                         columns: function (index, data, node) {
                             return table.column(index).visible();
@@ -162,8 +164,8 @@
                     "extend": "excel",
                     "text": "Excel",
                     "className": "btn btn-secondary btn-sm text-white",
-                    "title": "Category List",
-                    "filename": "category-list",
+                    "title": "Brand List",
+                    "filename": "brand-list",
                     "exportOptions": {
                         columns: function (index, data, node) {
                             return table.column(index).visible();
@@ -174,15 +176,15 @@
                     "extend": "pdf",
                     "text": "PDF",
                     "className": "btn btn-secondary btn-sm text-white",
-                    "title": "Category List",
-                    "filename": "category-list",
+                    "title": "Brand List",
+                    "filename": "brand-list",
                     "orientation": "landscape",
                     "exportOptions": {
                         columns: [1, 2, 3]
                     },
                 },
                 @endif
-                @if(permission('category-bulk-delete')) {
+                @if(permission('brand-bulk-delete')) {
                     "className": "btn btn-danger btn-sm delete_btn d-none text-white",
                     "text": "Delete",
                     action: function (e, dt, node, config) {
@@ -208,7 +210,7 @@
         $(document).on('click', '#save-btn', function () {
             let form = document.getElementById('store_or_update_form');
             let formData = new FormData(form);
-            let url = "{{ route('category.store.or.update') }}";
+            let url = "{{ route('brand.store.or.update') }}";
             let id = $('#update_id').val();
             let method;
             if (id) {
@@ -216,42 +218,7 @@
             } else {
                 method = 'add';
             }
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: formData,
-                contentType: false,
-                processData: false,
-                cache: false,
-                beforeSend: function () {
-                    $('#save-btn').addClass('kt-spinner kt-spinner--md kt-spinner--light');
-                },
-                complete: function () {
-                    $('#save-btn').removeClass('kt-spinner kt-spinner--md kt-spinner--light');
-                },
-                success: function (data) {
-                    $('#store_or_update_form').find('.is-invalid').removeClass('is-invalid');
-                    $('#store_or_update_form').find('.error').remove();
-                    if (data.status == false) {
-                        $.each(data.errors, function (key, value) {
-                            $('#store_or_update_form input#' + key).addClass('is-invalid');
-                            $('#store_or_update_form #' + key).parent().append(
-                                '<small class="error text-danger">' + value + '</small>'
-                            );
-                        });
-                    } else {
-                        notification(data.status, data.message);
-                        if (data.status == 'success') {
-                            if (method == 'update') {
-                                table.ajax.reload(null, false);
-                            } else {
-                                table.ajax.reload();
-                            }
-                            myModal.hide();
-                        }
-                    }
-                }
-            });
+            store_or_update_data(table, method, url, formData);
         });
 
         // edit menu data
@@ -266,7 +233,7 @@
             $('#store_or_update_form table tbody').find('tr:gt(0)').remove();
             if (id) {
                 $.ajax({
-                    url: "{{ route('category.edit') }}",
+                    url: "{{ route('brand.edit') }}",
                     type: "POST",
                     data: {
                         id: id,
@@ -275,7 +242,21 @@
                     dataType: "JSON",
                     success: function (data) {
                         $('#store_or_update_form #update_id').val(data.id);
-                        $('#store_or_update_form #name').val(data.name);
+                        $('#store_or_update_form #title').val(data.title);
+                        $('#store_or_update_form #old_image').val(data.image);
+
+                        if(data.image){
+                            var image = "{{ asset('storage/'.BRAND_IMAGE_PATH)}}/"+data.image;
+                            $('#store_or_update_form #image img.spartan_image_placeholder').css('display','none');
+                            $('#store_or_update_form #image .spartan_remove_row').css('display','none');
+                            $('#store_or_update_form #image .img_').css('display','block');
+                            $('#store_or_update_form #image .img_').attr('src',image);
+                        }else{
+                            $('#store_or_update_form #image img.spartan_image_placeholder').css('display','block');
+                            $('#store_or_update_form #image .spartan_remove_row').css('display','none');
+                            $('#store_or_update_form #image .img_').css('display','none');
+                            $('#store_or_update_form #image .img_').attr('src','');
+                        }
 
                         myModal = new bootstrap.Modal(document.getElementById(
                             'store_or_update_modal'), {
@@ -303,7 +284,7 @@
             let id   = $(this).data('id');
             let name = $(this).data('name');
             let row  = table.row($(this).parent('tr'));
-            let url  = "{{ route('category.delete') }}";
+            let url  = "{{ route('brand.delete') }}";
             delete_data(id, url, table, row, name);
         });
 
@@ -324,7 +305,7 @@
                     icon: "warning"
                 });
             } else {
-                let url = "{{ route('category.bulk.delete') }}";
+                let url = "{{ route('brand.bulk.delete') }}";
                 bulk_delete(ids, url, table, rows);
             }
         }
@@ -335,7 +316,7 @@
             let status = $(this).data('status');
             let name = $(this).data('name');
             let row = table.row($(this).parent('tr'));
-            let url = "{{ route('category.change.status') }}";
+            let url = "{{ route('brand.change.status') }}";
             Swal.fire({
                 title: 'Are you sure to change ' + name + ' status?',
                 text: "You won't be able to revert this!",
@@ -372,6 +353,26 @@
                     });
                 }
             })
+        });
+
+        // dropify for brand image
+        $('#image').spartanMultiImagePicker({
+            fieldName: 'image',
+            maxCount: 1,
+            rowHeight: '200px',
+            groupClassName: 'col-md-12 com-sm-12 com-xs-12',
+            maxFileSize: '',
+            dropFileLabel: 'Drop Here',
+            allowExt: 'png|jpg|jpeg',
+            onExtensionErr: function(index, file){
+                Swal.fire({icon:'error',title:'Oops...',text: 'Only png,jpg,jpeg file format allowed!'});
+            }
+        });
+
+        $('input[name="image"]').prop('required',true);
+
+        $('.remove-files').on('click', function(){
+            $(this).parents('.col-md-12').remove();
         });
     });
 </script>

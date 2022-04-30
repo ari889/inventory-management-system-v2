@@ -25,7 +25,7 @@
                 <h5 class="card-title"><i class="{{ $page_icon }} text-primary"></i> {{ $page_title }}</h5>
                 <a href="{{ route('role') }}" class="btn btn-primary btn-sm"><i class="fas fa-angle-left"></i> Back</a>
             </div>
-
+            <hr>
             <div class="row">
                 <h6 class="mt-3"><strong>Role Name:</strong> {{ $permission_data['role']->role_name }}</h6>
                 <h6 class="mb-5"><strong>Deletable:</strong> {{ DELETABLE[$permission_data['role']->deletable] }}</h6>
