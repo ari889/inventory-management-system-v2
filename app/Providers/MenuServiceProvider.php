@@ -20,14 +20,14 @@ class MenuServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('modules', function(){
+        $this->app->bind('menus', function(){
             return new Module();
         });
         $this->app->bind('permissions', function(){
             return new Permission();
         });
         $loader = AliasLoader::getInstance();
-        $loader->alias('Module',Module::class);
+        $loader->alias('Menu',Module::class);
         $loader->alias('Permission',Permission::class);
     }
 
@@ -42,7 +42,7 @@ class MenuServiceProvider extends ServiceProvider
             if(Auth::check()){
                 $role_id = auth()->user()->role_id;
 
-                $menus = Module::doesntHave('parent')
+                $menus = Menu::doesntHave('parent')
                             ->orderBy('order','asc')
                             ->with('children');
                 $permissions = Permission::select('slug');

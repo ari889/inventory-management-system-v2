@@ -27,4 +27,17 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('bulk-delete', 'BrandController@bulk_delete')->name('bulk.delete');
         Route::post('change-status', 'BrandController@change_status')->name('change.status');
     });
+
+    /**
+     * tax routes
+     */
+    Route::get('tax', 'TaxController@index')->name('tax');
+    Route::group(['prefix' => 'tax', 'as' => 'tax.'], function(){
+        Route::post('datatable-data', 'TaxController@get_datatable_data')->name('datatable.data');
+        Route::post('store-or-update', 'TaxController@store_or_update')->name('store.or.update');
+        Route::post('edit', 'TaxController@edit')->name('edit');
+        Route::post('delete', 'TaxController@delete')->name('delete');
+        Route::post('bulk-delete', 'TaxController@bulk_delete')->name('bulk.delete');
+        Route::post('change-status', 'TaxController@change_status')->name('change.status');
+    });
 });
