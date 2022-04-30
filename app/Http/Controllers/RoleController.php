@@ -47,6 +47,19 @@ class RoleController extends BaseController
     }
 
     /**
+     * create new role
+     */
+    public function create(){
+        if(permission('role-add')){
+            $this->setPageData('Create Role', 'Create Role', 'fas fa-th-list');
+            $data = $this->service->permission_module_list();
+            return view('role.create', compact('data'));
+        }else{
+            return $this->unauthorized_access_blocked();
+        }
+    }
+
+    /**
      * store or update data
      */
     public function store_or_update(RoleFormRequest $request){
@@ -69,18 +82,26 @@ class RoleController extends BaseController
     /**
      * edit menu data
      */
-    public function edit(Request $request){
+    public function edit(int $id){
         if(permission('role-edit')){
-            if($request->ajax()){
-                $data = $this->service->edit($request);
-                if($data->count() > 0){
-                    return $this->response_json($status="success", $message=null, $data=$data, $response_code=201);
-                }else{
-                    return $this->response_json($status="error", $message="Data Not Found", $data=null, $response_code=204);
-                }
-            }else{
-                return $this->response_json($status='error',$message=null,$data=null,$response_code=401);
-            }
+            $this->setPageData('Edit Role', 'Edit Role', 'fas fa-edit');
+            $data = $this->service->permission_module_list();
+            $permission_data = $this->service->edit($id);
+            return view('role.edit', compact('data', 'permission_data'));
+        }else{
+            return $this->unauthorized_access_blocked();
+        }
+    }
+
+    /**
+     * show role details
+     */
+    public function show(int $id){
+        if(permission('role-view')){
+            $this->setPageData('Role Details', 'Role Details', 'fas fa-eye');
+            $data = $this->service->permission_module_list();
+            $permission_data = $this->service->edit($id);
+            return view('role.details', compact('data', 'permission_data'));
         }else{
             return $this->unauthorized_access_blocked();
         }

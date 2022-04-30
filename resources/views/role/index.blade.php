@@ -24,9 +24,9 @@
             <div class="d-flex flex-row justify-content-between align-items-center">
                 <h5 class="card-title"><i class="{{ $page_icon }} text-primary"></i> {{ $page_title }}</h5>
                 @if(permission('role-add'))
-                    <button type="button" class="btn btn-primary btn-sm" onclick="showFormModal('Add new role', 'Save')">
+                    <a href="{{ route('role.create') }}" type="button" class="btn btn-primary btn-sm" onclick="showFormModal('Add new role', 'Save')">
                         <i class="fas fa-plus-square"></i> Add New
-                    </button>
+                    </a>
                 @endif
             </div>
             <form id="form-filter">
@@ -64,11 +64,6 @@
     </div>
 </div>
 
-<!-- menu add/edit modal start -->
-@if(permission('role-edit') || permission('role-add'))
-    @include('role.modal')
-@endif
-<!-- menu add/edit modal end -->
 @endsection
 
 @push('scripts')
@@ -204,60 +199,6 @@
                 $('#form-filter')[0].reset();
                 table.ajax.reload();
             });
-    
-            // if user add new role
-            $(document).on('click', '#save-btn', function(){
-                let form = document.getElementById('store_or_update_form');
-                let formData = new FormData(form);
-                let url = "{{ route('role.store.or.update') }}";
-                let id = $('#update_id').val();
-                let method;
-                if(id){
-                    method = 'update';
-                }else{
-                    method = 'add';
-                }
-                store_or_update_data(table, method, url, formData);
-            });
-    
-            // edit role data
-             $(document).on('click', '.edit_data', function(e){
-                e.preventDefault();
-                let id = $(this).data('id');
-                $('#store_or_update_form')[0].reset();
-                $('#store_or_update_form #update_id').val('');
-                $('#store_or_update_form').find('.is-invalid').removeClass('is-invalid');
-                $('#store_or_update_form').find('.error').remove();
-                $('#store_or_update_form .selectpicker').selectpicker('refresh');
-                $('#store_or_update_form table tbody').find('tr:gt(0)').remove();
-                if(id){
-                    $.ajax({
-                        url : "{{ route('role.edit') }}",
-                        type : "POST",
-                        data : {
-                            id : id,
-                            _token : _token
-                        },
-                        dataType : "JSON",
-                        success: function(data){
-                            $('#store_or_update_form #update_id').val(data.data.id);
-                            $('#store_or_update_form #role_name').val(data.data.role_name);
-                            $('#store_or_update_form #deletable').val(data.data.deletable);
-                            $('#store_or_update_form #deletable.selectpicker').selectpicker('refresh');
-    
-                            myModal = new bootstrap.Modal(document.getElementById('store_or_update_modal'), {
-                                keyboard: false,
-                                backdrop: 'static'
-                            });
-    
-                            myModal.show();
-    
-                            $("#store_or_update_modal .modal-title").html('<i class="fas fa-edit"></i> '+data.data.role_name);
-                            $("#store_or_update_modal #save-btn").text("Update");
-                        }
-                    });
-                }
-             });
 
             //  delete data
             $(document).on('click', '.delete_data', function(e){

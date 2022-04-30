@@ -16,14 +16,14 @@ class Role extends Model
      * relationship with module one to one
      */
     public function module_role(){
-        return $this->belongsTo(Module::class)->withTimestamp();
+        return $this->belongsToMany(Module::class)->withTimestamps();
     }
 
     /**
      * relationship with permission one to many
      */
     public function permission_role(){
-        return $this->belongsTo(Permission::class)->withTimestamp();
+        return $this->belongsToMany(Permission::class)->withTimestamps();
     }
 
     /**

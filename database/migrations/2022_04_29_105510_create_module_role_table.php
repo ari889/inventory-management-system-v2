@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateModuleRolesTable extends Migration
+class CreateModuleRoleTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateModuleRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create('module_roles', function (Blueprint $table) {
+        Schema::create('module_role', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('module_id');
             $table->foreign('module_id')->references('id')->on('modules');
@@ -30,6 +30,6 @@ class CreateModuleRolesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('module_roles');
+        Schema::dropIfExists('module_role');
     }
 }
