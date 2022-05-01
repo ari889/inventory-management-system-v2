@@ -3,6 +3,7 @@
 namespace Modules\System\Entities;
 
 use Modules\Base\Entities\BaseModel;
+use Illuminate\Support\Facades\Cache;
 
 class CustomerGroup extends BaseModel
 {
@@ -82,5 +83,54 @@ class CustomerGroup extends BaseModel
     public function count_all()
     {
         return self::toBase()->get()->count();
+    }
+
+    /**********************
+     * * cache data
+     **********************/
+    private const ALL_CUSTOMER_GROUPS = '_all_customer_groups';
+    private const ACTIVE_CUSTOMER_GROUPS = '_active_customer_groups';
+
+    /**
+     * get all customer gorups
+     */
+    public static function allCustomerGroups(){
+        return Cache::rememberForever(self::ALL_CUSTOMER_GROUPS, function () {
+            self::toBase()->get();
+        });
+    }
+
+    /**
+     * get active customer gorups
+     */
+    public static function activeCustomerGroups(){
+        return Cache::rememberForever(self::ACTIVE_CUSTOMER_GROUPS, function(){
+            return self::toBase()->where('status', 1)->get();
+        });
+    }
+
+    /**
+     * flash cache
+     */
+    public function flushCache(){
+        Cache::forget(self::ALL_CUSTOMER_GROUPS);
+        Cache::forget(self::ACTIVE_CUSTOMER_GROUPS);
+    }
+
+    /**
+     * run flashCache function where model boot
+     */
+    public static function boot(){
+        parent::boot();
+
+        static::created(function(){
+            self::flushCache();
+        });
+        static::updated(function(){
+            self::flushCache();
+        });
+        static::deleted(function(){
+            self::flushCache();
+        });
     }
 }
