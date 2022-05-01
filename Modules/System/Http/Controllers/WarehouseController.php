@@ -2,31 +2,29 @@
 
 namespace Modules\System\Http\Controllers;
 
-use App\Traits\UploadAble;
 use Illuminate\Http\Request;
-use Modules\System\Entities\Brand;
 use Modules\Base\Http\Controllers\BaseController;
-use Modules\System\Http\Requests\BrandFormRequest;
+use Modules\System\Entities\Warehouse;
+use Modules\System\Http\Requests\WarehouseFormRequest;
 
-class BrandController extends BaseController
+class WarehouseController extends BaseController
 {
-    use UploadAble;
     /**
      * load brand model
      */
 
-    public function __construct(Brand $brand)
+    public function __construct(Warehouse $warehouse)
     {
-        $this->model = $brand;
+        $this->model = $warehouse;
     }
 
     /**
      * get index view
      */
     public function index(){
-        if(permission('brand-access')){
-            $this->setPageData('Brand', 'Brand', 'fas fa-th-list');
-            return view('system::brand.index');
+        if(permission('warehouse-access')){
+            $this->setPageData('Warehouse', 'Warehouse', 'fas fa-warehouse');
+            return view('system::warehouse.index');
         }else{
             return $this->unauthorized_access_blocked();
         }
@@ -37,9 +35,24 @@ class BrandController extends BaseController
      */
     public function get_datatable_data(Request $request){
         if($request->ajax()){
-            if(permission('brand-access')){
-                if(!empty($request->title)){
-                    $this->model->setTitle($request->title);
+            if(permission('warehouse-access')){
+                /**
+                 * search warehouse by name
+                 */
+                if(!empty($request->name)){
+                    $this->model->setName($request->name);
+                }
+                /**
+                 * search warehouse by phone
+                 */
+                if(!empty($request->phone)){
+                    $this->model->setPhone($request->phone);
+                }
+                /**
+                 * search warehouse by email
+                 */
+                if(!empty($request->email)){
+                    $this->model->setEmail($request->email);
                 }
     
                 $this->model->setOrderValue($request->input('order.0.column'));
@@ -58,26 +71,28 @@ class BrandController extends BaseController
                     /**
                      * menu edit link
                      */
-                    if(permission('brand-edit')){
+                    if(permission('warehouse-edit')){
                         $action .= '<a href="#" class="dropdown-item edit_data" data-id="'.$value->id.'"><i class="fas fa-edit text-primary"></i> Edit</a>';
                     }
     
                     /**
                      * menu delete link
                      */
-                    if(permission('brand-delete')){
-                        $action .= '<a href="#" class="dropdown-item delete_data" data-id="'.$value->id.'" data-name="'.$value->title.'"><i class="fas fa-trash text-danger"></i> Delete</a>';
+                    if(permission('warehouse-delete')){
+                        $action .= '<a href="#" class="dropdown-item delete_data" data-id="'.$value->id.'" data-name="'.$value->name.'"><i class="fas fa-trash text-danger"></i> Delete</a>';
                     }
     
     
                     $row = [];
-                    if(permission('brand-bulk-delete')){
+                    if(permission('warehouse-bulk-delete')){
                         $row[] = table_checkbox($value->id);
                     }
                     $row[] = $no;
-                    $row[] = table_image(BRAND_IMAGE_PATH, $value->image, $value->title);
-                    $row[] = $value->title;
-                    $row[] = permission('brand-edit') ? change_status($value->id, $value->status, $value->title) : STATUS_LABEL[$value->status];
+                    $row[] = $value->name;
+                    $row[] = $value->phone;
+                    $row[] = $value->email;
+                    $row[] = $value->address;
+                    $row[] = permission('warehouse-edit') ? change_status($value->id, $value->status, $value->name) : STATUS_LABEL[$value->status];
                     $row[] = action_button($action);
                     $data[] = $row;
                 }
@@ -93,22 +108,13 @@ class BrandController extends BaseController
     }
 
     /**
-     * store or update category
+     * store or update warehouse
      */
-    public function store_or_update(BrandFormRequest $request){
+    public function store_or_update(WarehouseFormRequest $request){
         if($request->ajax()){
-            if(permission('brand-add') || permission('brand-edit')){
-                $collection = collect($request->validated())->only('title');
+            if(permission('warehouse-add') || permission('warehouse-edit')){
+                $collection = collect($request->validated());
                 $collection = $this->track_data($collection, $request->update_id);
-                $image = $request->old_image;
-                if($request->hasFile('image')){
-                    $image = $this->upload_file($request->file('image'), BRAND_IMAGE_PATH);
-
-                    if(!empty($request->old_image)){
-                        $this->delete_file($request->old_image, BRAND_IMAGE_PATH);
-                    }
-                }
-                $collection = $collection->merge(compact('image'));
                 $result = $this->model->updateOrCreate(['id' => $request->update_id], $collection->all());
                 $output = $this->store_message($result, $request->update_id);
             }else{
@@ -121,11 +127,11 @@ class BrandController extends BaseController
     }
 
     /**
-     * edit category
+     * edit warehouse
      */
     public function edit(Request $request){
         if($request->ajax()){
-            if(permission('brand-edit')){
+            if(permission('warehouse-edit')){
                 $data = $this->model->findOrFail($request->id);
                 $output = $this->data_message($data);
             }else{
@@ -142,15 +148,8 @@ class BrandController extends BaseController
      */
     public function delete(Request $request){
         if($request->ajax()){
-            if(permission('brand-delete')){
-                $brand = $this->model->find($request->id);
-                $image = $brand->image;
-                $result = $brand->delete();
-                if($result){
-                    if(!empty($image)){
-                        $this->delete_file($image, BRAND_IMAGE_PATH);
-                    }
-                }
+            if(permission('warehouse-delete')){
+                $result = $this->model->find($request->id)->delete();
                 $output = $this->delete_message($result);
             }else{
                 $output = $this->access_blocked();
@@ -166,18 +165,8 @@ class BrandController extends BaseController
      */
     public function bulk_delete(Request $request){
         if($request->ajax()){
-            if(permission('brand-bulk-delete')){
-                $brands = $this->model->toBase()->select('image')->whereIn('id', $request->ids)->get();
+            if(permission('warehouse-bulk-delete')){
                 $result = $this->model->destroy($request->ids);
-                if($result){
-                    if(!empty($brands)){
-                        foreach ($brands as $brand) {
-                            if($brand->image){
-                                $this->delete_file($brand->image, BRAND_IMAGE_PATH);
-                            }
-                        }
-                    }
-                }
                 $output = $this->delete_message($result);
             }else{
                 $output = $this->access_blocked();
@@ -193,7 +182,7 @@ class BrandController extends BaseController
      */
     public function change_status(Request $request){
         if($request->ajax()){
-            if(permission('brand-edit')){
+            if(permission('warehouse-edit')){
                 $result = $this->model->find($request->id)->update(['status' => $request->status]);
                 $output = $result ? ['status'=>'success','message'=>'Status has been changed successfully']
                 : ['status'=>'error','message'=>'Failed to change status'];

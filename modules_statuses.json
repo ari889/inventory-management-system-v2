@@ -2,5 +2,6 @@
     "Base": true,
     "Category": true,
     "Brand": true,
-    "System": true
+    "System": true,
+    "Supplier": true
 }

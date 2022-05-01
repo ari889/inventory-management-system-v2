@@ -83,7 +83,7 @@ class TaxController extends BaseController
                     $row[] = $no;
                     $row[] = $value->name;
                     $row[] = $value->rate;
-                    $row[] = permission('user-edit') ? change_status($value->id, $value->status, $value->name) : STATUS_LABEL[$value->status];
+                    $row[] = permission('tax-edit') ? change_status($value->id, $value->status, $value->name) : STATUS_LABEL[$value->status];
                     $row[] = action_button($action);
                     $data[] = $row;
                 }
