@@ -4,5 +4,6 @@
     "Brand": true,
     "System": true,
     "Supplier": true,
-    "Customer": true
+    "Customer": true,
+    "Product": true
 }
