@@ -66,6 +66,11 @@ define('STATUS', [
 ]);
 
 /**
+ * tax method
+ */
+define('TAX_METHOD',['1'=>'Exclusive','2'=>'Inclusive']);
+
+/**
  * user avatar path
  */
 define('USER_AVATAR_PATH', 'user/');
@@ -81,6 +86,10 @@ define('FAVICON_PATH', 'favicon/');
  * logo path
  */
 define('BRAND_IMAGE_PATH', 'brand/');
+/**
+ * product path
+ */
+define('PRODUCT_IMAGE_PATH', 'product/');
 
 /**
  * change status label
@@ -110,3 +119,15 @@ if(!function_exists('table_image')){
         return $image ? '<img src="storage/'.$path.$image.'" alt="'.$name.'" style="width: 50px;" />' : '<img src="images/default.svg" alt="Default Image" style="width: 50px;" />';
     }
 }
+
+/**
+ * define barcode symbology
+ */
+define('BARCODE_SYMBOLOGY', [
+    'c128' => 'Code 128',
+    'c39' => 'Code  39',
+    'UPCA' => 'UPC-A',
+    'UPCE' => 'UPC-E',
+    'EAN8' => 'EAN-8',
+    'EAN13' => 'EAN-13',
+]);
