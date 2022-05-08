@@ -9,11 +9,11 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -29,6 +29,11 @@ class LoginController extends Controller
     */
     use RedirectsUsers, ThrottlesLogins;
 
+    /**
+     * Where to redirect users after login.
+     *
+     * @var string
+     */
     protected $redirectTo = RouteServiceProvider::HOME;
     protected $user_menu;
     protected $user_permission;
@@ -43,11 +48,7 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    /**
-     * Show the application's login form.
-     *
-     * @return \Illuminate\View\View
-     */
+
     public function showLoginForm()
     {
         return view('auth.login');
@@ -76,10 +77,6 @@ class LoginController extends Controller
         }
 
         if ($this->attemptLogin($request)) {
-            if ($request->hasSession()) {
-                $request->session()->put('auth.password_confirmed_at', time());
-            }
-
             return $this->sendLoginResponse($request);
         }
 
@@ -135,7 +132,7 @@ class LoginController extends Controller
      * Send the response after the user was authenticated.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     protected function sendLoginResponse(Request $request)
     {
@@ -161,67 +158,45 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        if($user->status == 2){
+        if($user->status == 2)
+        {
             $this->guard()->logout();
-            return back()->with('error', 'Your account has been disabled. Please contact with admin.');
+            return back()->with('error','Your account is disabled. Please contact with admin.');
         }else{
-            /**
-             * get user role_id
-             */
             $role_id = auth()->user()->role_id;
 
-            /**
-             * get modules who has no parent with decending order
-             */
             $menus = Module::doesntHave('parent')
-                            ->orderBy('order', 'asc')
-                            ->with('children');
+                        ->orderBy('order','asc')
+                        ->with('children');
+            $permissions = Permission::select('slug');
 
-            /**
-             * get all permission slug
-             */
-            $permission = Permission::select('slug');
-
-            /**
-             * if user is super admin
-             */
-            if($role_id != 1){
+            if($role_id != 1)
+            {
                 $menus->whereHas('module_role', function($q) use ($role_id){
-                    $q->where('role_id', $role_id);
+                    $q->where('role_id',$role_id);
                 });
-                $permission->whereHas('permission_role', function($q) use ($role_id){
-                    $q->where('role_id', $role_id);
+                $permissions->whereHas('permission_role', function($q) use ($role_id){
+                    $q->where('role_id',$role_id);
                 });
             }
 
-            /**
-             * get user menu based on role_id
-             */
             $this->user_menu = $menus->get();
+            $this->user_permission = $permissions->get();
 
-            /**
-             * get user permission based on role_id
-             */
-            $this->user_permission = $permission->get();
-
-            /**
-             * if user menus is not empty then set data to session storage
-             */
-            if(!empty($this->user_menu)){
-                Session::put('menu', $this->user_menu);
+            if(!empty($this->user_menu))
+            {
+                Session::put('menu',$this->user_menu);
             }
 
             $permission = [];
-            
-            /**
-             * if user permission is not empty then make an array name permission and set it to the session storage 
-             */
-            if(!empty($this->user_permission)){
-                foreach($this->user_permission as $value){
-                    array_push($permission, $value->slug);
+
+            if(!empty($this->user_permission))
+            {
+                foreach ($this->user_permission as $value) {
+                    array_push($permission,$value->slug);
                 }
 
-                Session::put('permission', $permission);
+                Session::put('permission',$permission);
             }
         }
     }
@@ -255,7 +230,7 @@ class LoginController extends Controller
      * Log the user out of the application.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function logout(Request $request)
     {
@@ -271,7 +246,7 @@ class LoginController extends Controller
 
         return $request->wantsJson()
             ? new Response('', 204)
-            : redirect('/');
+            : redirect('/login');
     }
 
     /**
@@ -294,4 +269,5 @@ class LoginController extends Controller
     {
         return Auth::guard();
     }
+    
 }

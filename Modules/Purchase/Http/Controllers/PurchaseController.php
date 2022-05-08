@@ -1,30 +1,30 @@
 <?php
 
-namespace Modules\Category\Http\Controllers;
+namespace Modules\Purchase\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Modules\Category\Entities\Category;
 use Modules\Base\Http\Controllers\BaseController;
-use Modules\Category\Http\Requests\CategoryFormRequest;
+use Modules\Purchase\Entities\Purchase;
 
-class CategoryController extends BaseController
+class PurchaseController extends BaseController
 {
     /**
-     * load category model
+     * load purchase model
      */
 
-    public function __construct(Category $category)
+    public function __construct(Purchase $purchase)
     {
-        $this->model = $category;
+        $this->model = $purchase;
     }
 
     /**
      * get index view
      */
     public function index(){
-        if(permission('category-access')){
-            $this->setPageData('Category', 'category', 'fas fa-th-list');
-            return view('category::index');
+        if(permission('purchase-access')){
+            $this->setPageData('Customer', 'Customer', 'fas fa-user');
+            $customer_groups = CustomerGroup::activeCustomerGroups();
+            return view('customer::index', compact('customer_groups'));
         }else{
             return $this->unauthorized_access_blocked();
         }
@@ -35,9 +35,30 @@ class CategoryController extends BaseController
      */
     public function get_datatable_data(Request $request){
         if($request->ajax()){
-            if(permission('category-access')){
+            if(permission('purchase-access')){
+                /**
+                 * search warehouse by name
+                 */
+                if(!empty($request->customer_group_id)){
+                    $this->model->setCustomerGroupID($request->customer_group_id);
+                }
+                /**
+                 * search warehouse by name
+                 */
                 if(!empty($request->name)){
                     $this->model->setName($request->name);
+                }
+                /**
+                 * search warehouse by phone
+                 */
+                if(!empty($request->phone)){
+                    $this->model->setPhone($request->phone);
+                }
+                /**
+                 * search warehouse by email
+                 */
+                if(!empty($request->email)){
+                    $this->model->setEmail($request->email);
                 }
     
                 $this->model->setOrderValue($request->input('order.0.column'));
@@ -56,25 +77,42 @@ class CategoryController extends BaseController
                     /**
                      * menu edit link
                      */
-                    if(permission('category-edit')){
+                    if(permission('purchase-edit')){
                         $action .= '<a href="#" class="dropdown-item edit_data" data-id="'.$value->id.'"><i class="fas fa-edit text-primary"></i> Edit</a>';
+                    }
+
+                    /**
+                     * menu edit link
+                     */
+                    if(permission('purchase-view')){
+                        $action .= '<a href="#" class="dropdown-item view_data" data-id="'.$value->id.'"><i class="fas fa-eye text-warning"></i> View</a>';
                     }
     
                     /**
                      * menu delete link
                      */
-                    if(permission('category-delete')){
+                    if(permission('purchase-delete')){
                         $action .= '<a href="#" class="dropdown-item delete_data" data-id="'.$value->id.'" data-name="'.$value->name.'"><i class="fas fa-trash text-danger"></i> Delete</a>';
                     }
     
     
                     $row = [];
-                    if(permission('category-bulk-delete')){
+                    if(permission('purchase-bulk-delete')){
                         $row[] = table_checkbox($value->id);
                     }
                     $row[] = $no;
+                    $row[] = $value->customer_group->group_name;
                     $row[] = $value->name;
-                    $row[] = permission('user-edit') ? change_status($value->id, $value->status, $value->name) : STATUS_LABEL[$value->status];
+                    $row[] = $value->company_name;
+                    $row[] = $value->tax_number;
+                    $row[] = $value->phone;
+                    $row[] = $value->email;
+                    $row[] = $value->address;
+                    $row[] = $value->city;
+                    $row[] = $value->state;
+                    $row[] = $value->postal_code;
+                    $row[] = $value->country;
+                    $row[] = permission('purchase-edit') ? change_status($value->id, $value->status, $value->name) : STATUS_LABEL[$value->status];
                     $row[] = action_button($action);
                     $data[] = $row;
                 }
@@ -90,11 +128,11 @@ class CategoryController extends BaseController
     }
 
     /**
-     * store or update category
+     * store or update warehouse
      */
-    public function store_or_update(CategoryFormRequest $request){
+    public function store_or_update(CustomerFormRequest $request){
         if($request->ajax()){
-            if(permission('category-add') || permission('category-edit')){
+            if(permission('purchase-add') || permission('purchase-edit')){
                 $collection = collect($request->validated());
                 $collection = $this->track_data($collection, $request->update_id);
                 $result = $this->model->updateOrCreate(['id' => $request->update_id], $collection->all());
@@ -109,11 +147,11 @@ class CategoryController extends BaseController
     }
 
     /**
-     * edit category
+     * edit warehouse
      */
     public function edit(Request $request){
         if($request->ajax()){
-            if(permission('category-edit')){
+            if(permission('purchase-edit')){
                 $data = $this->model->findOrFail($request->id);
                 $output = $this->data_message($data);
             }else{
@@ -126,11 +164,23 @@ class CategoryController extends BaseController
     }
 
     /**
+     * supplier view
+     */
+    public function show(Request $request){
+        if($request->ajax()){
+            if(permission('purchase-view')){
+                $supplier = $this->model->findOrFail($request->id);
+                return view('supplier::details', compact('supplier'))->render();
+            }
+        }
+    }
+
+    /**
      * delete category
      */
     public function delete(Request $request){
         if($request->ajax()){
-            if(permission('category-delete')){
+            if(permission('purchase-delete')){
                 $result = $this->model->find($request->id)->delete();
                 $output = $this->delete_message($result);
             }else{
@@ -147,7 +197,7 @@ class CategoryController extends BaseController
      */
     public function bulk_delete(Request $request){
         if($request->ajax()){
-            if(permission('category-bulk-delete')){
+            if(permission('purchase-bulk-delete')){
                 $result = $this->model->destroy($request->ids);
                 $output = $this->delete_message($result);
             }else{
@@ -160,11 +210,11 @@ class CategoryController extends BaseController
     }
 
     /**
-     * change category status
+     * change brand status
      */
     public function change_status(Request $request){
         if($request->ajax()){
-            if(permission('category-edit')){
+            if(permission('purchase-edit')){
                 $result = $this->model->find($request->id)->update(['status' => $request->status]);
                 $output = $result ? ['status'=>'success','message'=>'Status has been changed successfully']
                 : ['status'=>'error','message'=>'Failed to change status'];
@@ -176,6 +226,4 @@ class CategoryController extends BaseController
             return response()->json($this->access_blocked());
         }
     }
-
-    
 }
