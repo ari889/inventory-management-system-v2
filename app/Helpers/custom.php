@@ -155,3 +155,8 @@ define('PAYMENT_STATUS_LABEL', [
     '1' => '<span class="badge bg-success">Paid</span>',
     '2' => '<span class="badge bg-danger">Due</span>',
 ]);
+
+/**
+ * payment method
+ */
+define('PAYMENT_METHOD',['1'=>'Cash','2'=>'Cheque','3'=>'Mobile']);

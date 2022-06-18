@@ -103,10 +103,24 @@ class PurchaseController extends BaseController
                         $action .= '<a href="'.route('purchase.edit', ['id' => $value->id]).'" class="dropdown-item edit_data" data-id="'.$value->id.'"><i class="fas fa-edit text-primary"></i> Edit</a>';
                     }
                     /**
-                     * purchase edit link
+                     * purchase view link
                      */
                     if(permission('purchase-view')){
                         $action .= '<a href="'.route('purchase.show', ['id' => $value->id]).'" class="dropdown-item edit_data" data-id="'.$value->id.'"><i class="fas fa-eye text-success"></i> View</a>';
+                    }
+
+                    /**
+                     * purchase payment add link
+                     */
+                    if(permission('purchase-payment-add')){
+                        $action .= '<a href="#" class="dropdown-item add_payment" data-id="'.$value->id.'" data-due="'.($value->grand_total - $value->paid_amount).'"><i class="fas fa-plus-square text-info"></i> Add Payment</a>';
+                    }
+
+                    /**
+                     * view payment
+                     */
+                    if(permission('purchase-payment-add')){
+                        $action .= '<a href="#" class="dropdown-item view_payment_list" data-id="'.$value->id.'"><i class="fas fa-plus-square text-default"></i> Payment List</a>';
                     }
     
                     /**
@@ -420,7 +434,7 @@ class PurchaseController extends BaseController
             if(permission('purchase-delete')){
                 DB::beginTransaction();
                 try {
-                    $purchaseData = Purchase::with('purchase_products')->find($request->id);
+                    $purchaseData = Purchase::with('purchase_products', 'payments')->find($request->id);
                     if(!$purchaseData->purchase_products->isEmpty())
                     {
                         foreach ($purchaseData->purchase_products as  $purchase_product) {
@@ -443,6 +457,9 @@ class PurchaseController extends BaseController
                     }
                     if(!$purchaseData->purchase_products->isEmpty()){
                         $purchaseData->purchase_products()->detach();
+                    }
+                    if(!$purchaseData->payments->isEMpty()){
+                        $purchaseData->payments()->delete();
                     }
                     
                     $result = $purchaseData->delete();
@@ -468,8 +485,46 @@ class PurchaseController extends BaseController
     public function bulk_delete(Request $request){
         if($request->ajax()){
             if(permission('purchase-bulk-delete')){
-                $result = $this->model->destroy($request->ids);
-                $output = $this->delete_message($result);
+                foreach ($request->ids as $id) {
+                    DB::beginTransaction();
+                    try {
+                        $purchaseData = Purchase::with('purchase_products','payments')->find($id);
+                        $old_document = $purchaseData ? $purchaseData->document : '';
+                        if(!$purchaseData->purchase_products->isEmpty())
+                        {
+                            foreach ($purchaseData->purchase_products as  $purchase_product) {
+                                $purchase_unit = Unit::find($purchase_product->pivot->unit_id);
+                                if($purchase_unit->operator == '*'){
+                                    $received_qty = $purchase_product->pivot->received * $purchase_unit->operation_value;
+                                }else{
+                                    $received_qty = $purchase_product->pivot->received / $purchase_unit->operation_value;
+                                }
+                                $product_data = Product::find($purchase_product->id);
+                                $product_data->qty -= $received_qty;
+                                $product_data->update();
+    
+                                $warehouse_product = WarehouseProduct::where([
+                                    'warehouse_id'=>$purchaseData->warehouse_id,
+                                    'product_id'=>$purchase_product->id])->first();
+                                $warehouse_product->qty -= $received_qty;
+                                $warehouse_product->update();
+                            }
+                        }
+                        if(!$purchaseData->purchase_products->isEmpty()){
+                            $purchaseData->purchase_products()->detach();
+                        }
+                        if(!$purchaseData->payments->isEMpty()){
+                            $purchaseData->payments()->delete();
+                        }
+                        $result = $purchaseData->delete();
+                        $output = $result ? ['status' => 'success','message' => 'Data has been deleted successfully'] : ['status' => 'error','message' => 'failed to delete data'];
+                        DB::commit();
+                    } catch (Exception $e) {
+                        DB::rollBack();
+                        $output = ['status'=>'error','message'=>$e->getMessage()];
+                    }
+                    return response()->json($output);
+                }
             }else{
                 $output = $this->access_blocked();
             }

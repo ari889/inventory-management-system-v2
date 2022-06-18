@@ -3,6 +3,7 @@
 namespace Modules\Purchase\Entities;
 
 use Modules\Base\Entities\BaseModel;
+use Modules\Account\Entities\Payment;
 use Modules\Product\Entities\Product;
 use Modules\Supplier\Entities\Supplier;
 
@@ -29,6 +30,14 @@ class Purchase extends BaseModel
         return $this->belongsToMany(Product::class, 'purchase_products', 'purchase_id', 'product_id', 'id', 'id')
                     ->withPivot(['qty', 'received', 'unit_id', 'net_unit_cost', 'discount', 'tax_rate', 'tax', 'total'])
                     ->withTimestamps();
+    }
+
+    /**
+     * one to one relationship with payment
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class,'purchase_id','id');
     }
     
 
