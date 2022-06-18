@@ -32,7 +32,7 @@
             <hr>
             <form id="form-filter">
                 <div class="row">
-                    <x-form.selectbox labelName="Customert Group" name="customer_group_id" required="required" col="col-md-4 mb-3" class="selectpicker">
+                    <x-form.selectbox labelName="Customer Group" name="customer_group_id" required="required" col="col-md-4 mb-3" class="selectpicker">
                         @if(!$customer_groups->isEmpty())
                             @foreach ($customer_groups as $customer_group)
                                 <option value="{{ $customer_group->id }}">{{ $customer_group->group_name }}</option>

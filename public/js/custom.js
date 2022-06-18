@@ -55,7 +55,7 @@ function showFormModal(modal_title, btn_text) {
 /**
  * sweet alert notification
  */
-function notification(start, message) {
+function notification(status, message) {
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',

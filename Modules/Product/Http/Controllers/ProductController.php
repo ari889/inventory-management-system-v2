@@ -12,6 +12,8 @@ use Modules\System\Entities\Brand;
 use Modules\System\Entities\Tax;
 use Modules\System\Entities\Unit;
 use Keygen;
+use Modules\Product\Entities\WarehouseProduct;
+use Modules\System\Entities\Warehouse;
 
 class ProductController extends BaseController
 {
@@ -62,10 +64,7 @@ class ProductController extends BaseController
                     $this->model->setCategoryID($request->category_id);
                 }
     
-                $this->model->setOrderValue($request->input('order.0.column'));
-                $this->model->setDirValue($request->input('order.0.dir'));
-                $this->model->setLengthValue($request->input('length'));
-                $this->model->setStartValue($request->input('start'));
+                $this->set_datatable_default_property($request);
     
                 $list = $this->model->getDatatableList();
     
@@ -271,4 +270,116 @@ class ProductController extends BaseController
         $units = Unit::where('base_unit', $id)->orWhere('id', $id)->pluck('unit_name', 'id');
         return json_encode($units);
     }
+
+    /**
+     * product autocomplete search
+     */
+    public function product_autocomplete_search(Request $request){
+        if($request->ajax()){
+            if(!empty($request->search)){
+                $output = [];
+                if(!$request->has('warehouse_id')){
+                    $data = $this->model->where('name', 'like', '%'.$request->search.'%')
+                                        ->orWhere('code', 'like', '%'.$request->search.'%')
+                                        ->get();
+                    if(!$data->isEmpty()){
+                        foreach($data as $key => $value){
+                            $item['id'] = $value->id;
+                            $item['value'] = $value->code.' - '.$value->name;
+                            $item['label'] = $value->code.' - '.$value->name;
+                            $output[] = $item;
+                        }
+                    }else{
+                        $output['value'] = '';
+                        $output['label'] = 'No record found';
+                    }
+                }else{
+                    $search_text = $request->search;
+                    $data = WarehouseProduct::with('product')->where([
+                        ['warehouse_id', $request->warehouse_id], ['qty', '>', 0]
+                    ])->whereHas('product', function($q) use ($search_text){
+                        $q->where('name', 'like', '%'.$search_text.'%')
+                        ->orWhere('code', 'like', '%'.$search_text.'%');
+                    })->get();
+                    if(!$data->isEmpty()){
+                        foreach($data as $key => $value){
+                            $item['id'] = $value->id;
+                            $item['value'] = $value->code.' - '.$value->name;
+                            $item['label'] = $value->code.' - '.$value->name;
+                            $output[] = $item;
+                        }
+                    }else{
+                        $output['value'] = '';
+                        $output['label'] = 'No record found';
+                    }
+                }
+                return $output;
+            }
+        }
+    }
+
+    /**
+     * search product
+     */
+    public function product_search(Request $request){
+        if($request->ajax()){
+            $code = explode('-', $request['data']);
+            $product_data = $this->model->with('tax')->where('code', $code[0])->first();
+            if($product_data){
+                $product['id'] = $product_data->id;
+                $product['name'] = $product_data->name;
+                $product['code'] = $product_data->code;
+                if($request->type == 'purchase'){
+                    $product['cost'] = $product_data->cost;
+                }else{
+                    $product['cost'] = $product_data->price;
+                }
+
+                $product['tax_rate']   = $product_data->tax->rate;
+                $product['tax_name']   = $product_data->tax->name;
+                $product['tax_method'] = $product_data->tax_method;
+                if($request->type == 'sale'){
+                    $warehouse_product = WarehouseProduct::where([
+                        'warehouse_id' => $request->warehouse_id, 'product_id' => $product_data->id
+                    ])->first();
+                    $product['qty'] = $warehouse_product ? $warehouse_product->qty : 0;
+                }
+
+                $units = Unit::where('base_unit', $product_data->unit_id)->orWhere('id', $product_data->unit_id)->get();
+                $unit_name = [];
+                $unit_operator = [];
+                $unit_operation_value = [];
+                if($units){
+                    foreach($units as $unit){
+                        if($request->type == 'purchase'){
+                            if($product_data->purchase_unit_id == $unit->id){
+                                array_unshift($unit_name, $unit->unit_name);
+                                array_unshift($unit_operator, $unit->operator);
+                                array_unshift($unit_operation_value, $unit->operation_value);
+                            }else{
+                                $unit_name           [] = $unit->unit_name;
+                                $unit_operator       [] = $unit->operator;
+                                $unit_operation_value[] = $unit->operation_value;
+                            }
+                        }else{
+                            if($product_data->sale_unit_id == $unit->id){
+                                array_unshift($unit_name, $unit->unit_name);
+                                array_unshift($unit_operator, $unit->operator);
+                                array_unshift($unit_operation_value, $unit->operation_value);
+                            }else{
+                                $unit_name           [] = $unit->unit_name;
+                                $unit_operator       [] = $unit->operator;
+                                $unit_operation_value[] = $unit->operation_value;
+                            }
+                        }
+                    }
+                }
+                $product['unit_name'] = implode(',', $unit_name).',';
+                $product['unit_operator'] = implode(',', $unit_operator).',';
+                $product['unit_operation_value'] = implode(',', $unit_operation_value).',';
+                return $product;
+            }
+        }
+    }
+
 }

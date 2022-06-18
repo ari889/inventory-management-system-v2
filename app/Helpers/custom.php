@@ -90,6 +90,10 @@ define('BRAND_IMAGE_PATH', 'brand/');
  * product path
  */
 define('PRODUCT_IMAGE_PATH', 'product/');
+/**
+ * purchase document path
+ */
+define('PURCHASE_DOCUMENT_PATH', 'purchase-document/');
 
 /**
  * change status label
@@ -130,4 +134,24 @@ define('BARCODE_SYMBOLOGY', [
     'UPCE' => 'UPC-E',
     'EAN8' => 'EAN-8',
     'EAN13' => 'EAN-13',
+]);
+
+/**
+ * purchase status 
+ */
+define('PURCHASE_STATUS', ['1' => 'Received', '2' => 'Partial', '3' => 'Pending', '4' => 'Ordered']);
+define('PURCHASE_STATUS_LABEL', [
+    '1' => '<span class="badge bg-success">Received</span>',
+    '2' => '<span class="badge bg-warning">Partial</span>',
+    '3' => '<span class="badge bg-danger">Pending</span>',
+    '4' => '<span class="badge bg-info">Ordered</span>',
+]);
+
+/**
+ * payment status
+ */
+define('PAYMENT_STATUS', ['1' => 'Paid', '2' => 'Due']);
+define('PAYMENT_STATUS_LABEL', [
+    '1' => '<span class="badge bg-success">Paid</span>',
+    '2' => '<span class="badge bg-danger">Due</span>',
 ]);

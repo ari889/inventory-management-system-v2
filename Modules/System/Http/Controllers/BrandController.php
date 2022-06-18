@@ -42,10 +42,7 @@ class BrandController extends BaseController
                     $this->model->setTitle($request->title);
                 }
     
-                $this->model->setOrderValue($request->input('order.0.column'));
-                $this->model->setDirValue($request->input('order.0.dir'));
-                $this->model->setLengthValue($request->input('length'));
-                $this->model->setStartValue($request->input('start'));
+                $this->set_datatable_default_property($request);
     
                 $list = $this->model->getDatatableList();
     
