@@ -189,3 +189,11 @@ define('SALE_DOCUMENT_PATH','sale-document/');
  * employee avatar image path
  */
 define('EMPLOYEE_IMAGE_PATH','employee/');
+
+/**
+ * attendance label
+ */
+define('ATTENDANCE_STATUS_LABEL',
+['1'=>'<span class="badge bg-success">Present</span>',
+'2'=>'<span class="badge bg-danger">Late</span>',
+]);
