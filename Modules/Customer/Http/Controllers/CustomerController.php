@@ -225,4 +225,13 @@ class CustomerController extends BaseController
             return response()->json($this->access_blocked());
         }
     }
+
+    /**
+     * get customer group data
+     */
+    public function groupData(int $id)
+    {
+        $data = $this->model->with('customer_group')->find($id);
+        return $data ? $data->customer_group->percentage : 0;
+    }
 }

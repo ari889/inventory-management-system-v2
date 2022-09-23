@@ -160,3 +160,27 @@ define('PAYMENT_STATUS_LABEL', [
  * payment method
  */
 define('PAYMENT_METHOD',['1'=>'Cash','2'=>'Cheque','3'=>'Mobile']);
+
+/**
+ * sale status and label
+ */
+define('SALE_STATUS',['1'=>'Completed','2'=>'Pending']);
+define('SALE_STATUS_LABEL',
+['1'=>'<span class="badge bg-success">Completed</span>',
+'2'=>'<span class="badge bg-danger">Pending</span>',
+]);
+
+/**
+ * sale payment status label
+ */
+define('SALE_PAYMENT_STATUS',['1'=>'Paid','2'=>'Pertially Paid', '3' => 'Due']);
+define('SALE_PAYMENT_STATUS_LABEL',
+['1'=>'<span class="badge bg-success">Paid</span>',
+'2'=>'<span class="badge bg-info">Partial</span>',
+'3'=>'<span class="badge bg-danger">Due</span>',
+]);
+
+/**
+ * sale document path
+ */
+define('SALE_DOCUMENT_PATH','sale-document/');
