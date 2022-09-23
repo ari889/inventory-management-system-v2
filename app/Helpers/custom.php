@@ -184,3 +184,8 @@ define('SALE_PAYMENT_STATUS_LABEL',
  * sale document path
  */
 define('SALE_DOCUMENT_PATH','sale-document/');
+
+/**
+ * employee avatar image path
+ */
+define('EMPLOYEE_IMAGE_PATH','employee/');
