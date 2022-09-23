@@ -197,3 +197,8 @@ define('ATTENDANCE_STATUS_LABEL',
 ['1'=>'<span class="badge bg-success">Present</span>',
 '2'=>'<span class="badge bg-danger">Late</span>',
 ]);
+
+/**
+ * payroll payment method
+ */
+define('PAYROLL_PAYMENT_METHOD',['1'=>'Cash','2'=>'Bank','3'=>'Mobile']);
