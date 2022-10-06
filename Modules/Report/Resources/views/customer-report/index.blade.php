@@ -5,10 +5,7 @@
 @endsection
 
 @push('styles')
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css"
-        integrity="sha512-rBi1cGvEdd3NmSAQhPWId5Nd6QxE8To4ADjM2a6n0BrqQdisZ/RPUlm0YycDzvNL1HHAh1nKZqI0kSbif+5upQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="daterange/css/daterangepicker.min.css">
 @endpush
 
 @section('content')
@@ -112,6 +109,7 @@
     <script>
         $('.daterangepicker-field').daterangepicker({
             callback: function(startDate, endDate, period) {
+                console.log(startDate)
                 var start_date = startDate.format('YYYY-MM-DD');
                 var end_date = endDate.format('YYYY-MM-DD');
                 var title = start_date + ' To ' + end_date;

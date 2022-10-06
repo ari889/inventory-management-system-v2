@@ -2,78 +2,80 @@
 
 namespace Modules\Report\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Modules\System\Entities\Unit;
+use Modules\System\Entities\Brand;
+use Modules\Category\Entities\Category;
+use Modules\Base\Http\Controllers\BaseController;
+use Modules\Report\Entities\ProductQuantityAlert;
 
-class ProductQuantityController extends Controller
+class ProductQuantityController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
+    public function __construct(ProductQuantityAlert $model)
+    {
+        $this->model = $model;
+    }
+
     public function index()
     {
-        return view('report::index');
+        if(permission('product-quantity-alert-access')){
+            $this->setPageData('Product Quantity Alert','Product Quantity Alert','fas fa-box');
+            $data = [
+                'brands' => Brand::all(),
+                'categories' => Category::all(),
+                'units' => Unit::all(),
+            ];
+            return view('report::product-quantity-alert.index',$data);
+        }else{
+            return $this->unauthorized_access_blocked();
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create()
+    public function get_datatable_data(Request $request)
     {
-        return view('report::create');
-    }
+        if(permission('product-quantity-alert-access')){
+            if($request->ajax()){
+                if (!empty($request->name)) {
+                    $this->model->setName($request->name);
+                }
+                if (!empty($request->code)) {
+                    $this->model->setCode($request->code);
+                }
+                if (!empty($request->brand_id)) {
+                    $this->model->setBrandID($request->brand_id);
+                }
+                if (!empty($request->category_id)) {
+                    $this->model->setCategoryID($request->category_id);
+                }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+                $this->set_datatable_default_property($request);
+                $list = $this->model->getDatatableList();
+    
+                $data = [];
+                $no = $request->input('start');
+                foreach ($list as $value) {
+                    $no++;
+                    
+                    $row = [];
+     
+                    $row[] = $no;
+                    $row[] = table_image(PRODUCT_IMAGE_PATH,$value->image,$value->name);
+                    $row[] = $value->name;
+                    $row[] = $value->code;
+                    $row[] = $value->brand->title;
+                    $row[] = $value->category->name;
+                    $row[] = $value->unit->unit_name;
+                    $row[] = number_format($value->qty,2);
+                    $row[] = $value->alert_qty ? number_format($value->alert_qty,2) : 0;
+                    $data[] = $row;
+                }
+                return $this->datatable_draw($request->input('draw'),$this->model->count_all(),
+                 $this->model->count_filtered(), $data);
+            }else{
+                $output = $this->access_blocked();
+            }
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
-    {
-        return view('report::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
-    {
-        return view('report::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
-    {
-        //
+            return response()->json($output);
+        }
     }
 }
