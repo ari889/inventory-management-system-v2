@@ -2,78 +2,151 @@
 
 namespace Modules\Report\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
+use Modules\Sale\Entities\Sale;
+use Modules\HRM\Entities\Payroll;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+use Modules\Expense\Entities\Expense;
+use Modules\System\Entities\Warehouse;
+use Modules\Purchase\Entities\Purchase;
+use Illuminate\Contracts\Support\Renderable;
 
 class SummaryReportController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
+    protected function setPageData($page_title,$sub_title,$page_icon)
+    {
+        view()->share(['page_title'=>$page_title,'sub_title'=>$sub_title,'page_icon'=>$page_icon]);
+    } 
+
     public function index()
     {
-        return view('report::index');
+        if(permission('summary-report-access')){
+            $this->setPageData('Summary Report','Summary Report','fas fa-file-signature');
+            return view('report::summary-report.index');
+        }else{
+            return redirect('unauthorized');
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create()
+    public function report(Request $request)
     {
-        return view('report::create');
-    }
+        if($request->ajax())
+        {
+            $start_date = $request->start_date ? $request->start_date : date('Y-m').'-01';
+            $end_date   = $request->end_date ? $request->end_date : date('Y-m-d');
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+            $query1 = ['SUM(grand_total) AS grand_total','SUM(paid_amount) AS paid_amount','SUM(total_tax + order_tax) AS tax'];
+            $query2 = ['SUM(grand_total) AS grand_total','SUM(total_tax + order_tax) AS tax'];
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
-    {
-        return view('report::show');
-    }
+            $purchase = Purchase::whereDate('created_at','>=',$start_date)
+                                ->whereDate('created_at','<=',$end_date)
+                                ->selectRaw(implode(',',$query1))->get();
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
-    {
-        return view('report::edit');
-    }
+            $total_purchase = Purchase::whereDate('created_at','>=',$start_date)
+                                        ->whereDate('created_at','<=',$end_date)->count();
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+            $sale = Sale::whereDate('created_at','>=',$start_date)
+                                    ->whereDate('created_at','<=',$end_date)
+                                    ->selectRaw(implode(',',$query1))->get();
+        
+            $total_sale = Sale::whereDate('created_at','>=',$start_date)
+                                        ->whereDate('created_at','<=',$end_date)->count();   
+                                        
+            $expense = Expense::whereDate('created_at','>=',$start_date)
+                                ->whereDate('created_at','<=',$end_date)->sum('amount');
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
-    {
-        //
+            $total_expense = Expense::whereDate('created_at','>=',$start_date)
+                                ->whereDate('created_at','<=',$end_date)->count();
+
+            $payroll = Payroll::whereDate('created_at','>=',$start_date)
+                                ->whereDate('created_at','<=',$end_date)->sum('amount');
+
+            $total_payroll = Payroll::whereDate('created_at','>=',$start_date)
+                                ->whereDate('created_at','<=',$end_date)->count();
+
+            $total_item = DB::table('warehouse_products as wp')
+                            ->join('products as p','wp.product_id','=','p.id')
+                            ->where([
+                                ['p.status',1],
+                                ['wp.qty','>',0]
+                            ])->count();
+            
+            $payment_received_number = DB::table('payments')->whereNotNull('sale_id')
+                                        ->whereDate('created_at','>=',$start_date)
+                                        ->whereDate('created_at','<=',$end_date)->count(); 
+
+            $payment_received = DB::table('payments')->whereNotNull('sale_id')
+                                        ->whereDate('created_at','>=',$start_date)
+                                        ->whereDate('created_at','<=',$end_date)
+                                        ->sum('amount');
+
+            $cash_payment_sale = DB::table('payments')->where('payment_method',1)->whereNotNull('sale_id')
+                                        ->whereDate('created_at','>=',$start_date)
+                                        ->whereDate('created_at','<=',$end_date)
+                                        ->sum('amount');
+
+            $cheque_payment_sale = DB::table('payments')->where('payment_method',2)->whereNotNull('sale_id')
+                                        ->whereDate('created_at','>=',$start_date)
+                                        ->whereDate('created_at','<=',$end_date)
+                                        ->sum('amount');
+
+            $mobile_payment_sale = DB::table('payments')->where('payment_method',3)->whereNotNull('sale_id')
+                                        ->whereDate('created_at','>=',$start_date)
+                                        ->whereDate('created_at','<=',$end_date)
+                                        ->sum('amount');
+
+            $payment_paid_number = DB::table('payments')->whereNotNull('purchase_id')
+                                        ->whereDate('created_at','>=',$start_date)
+                                        ->whereDate('created_at','<=',$end_date)->count(); 
+
+            $payment_paid = DB::table('payments')->whereNotNull('purchase_id')
+                                        ->whereDate('created_at','>=',$start_date)
+                                        ->whereDate('created_at','<=',$end_date)
+                                        ->sum('amount');
+
+            $cash_payment_purchase = DB::table('payments')->where('payment_method',1)->whereNotNull('purchase_id')
+                                        ->whereDate('created_at','>=',$start_date)
+                                        ->whereDate('created_at','<=',$end_date)
+                                        ->sum('amount');
+            $cheque_payment_purchase = DB::table('payments')->where('payment_method',2)->whereNotNull('purchase_id')
+                                        ->whereDate('created_at','>=',$start_date)
+                                        ->whereDate('created_at','<=',$end_date)
+                                        ->sum('amount');
+            $mobile_payment_purchase = DB::table('payments')->where('payment_method',3)->whereNotNull('purchase_id')
+                                        ->whereDate('created_at','>=',$start_date)
+                                        ->whereDate('created_at','<=',$end_date)
+                                        ->sum('amount');
+
+            $warehouses = Warehouse::where('status',1)->get();
+            $warehouse_name = [];
+            $warehouse_sale = [];
+            $warehouse_purchase = [];
+            $warehouse_expense = [];
+            if(!$warehouses->isEmpty())
+            {
+                foreach ($warehouses as $warehouse) {
+                    $warehouse_name[] = $warehouse->name;
+                    $warehouse_sale[] = Sale::where('warehouse_id',$warehouse->id)
+                                            ->whereDate('created_at','>=',$start_date)
+                                            ->whereDate('created_at','<=',$end_date)
+                                            ->selectRaw(implode(',',$query1))->get();
+
+                    $warehouse_purchase[] = Purchase::where('warehouse_id',$warehouse->id)
+                                            ->whereDate('created_at','>=',$start_date)
+                                            ->whereDate('created_at','<=',$end_date)
+                                            ->selectRaw(implode(',',$query1))->get();
+
+                    $warehouse_expense[] = Expense::where('warehouse_id',$warehouse->id)
+                                            ->whereDate('created_at','>=',$start_date)
+                                            ->whereDate('created_at','<=',$end_date)
+                                            ->sum('amount');
+                }
+            }
+
+            return view('report::summary-report.report',compact('purchase','total_purchase','sale','total_sale','expense',
+            'total_expense','payroll','total_payroll','total_item','payment_received_number','payment_received','cash_payment_sale','cheque_payment_sale','mobile_payment_sale',
+            'payment_paid_number','payment_paid','cash_payment_purchase','cheque_payment_purchase','mobile_payment_purchase','warehouse_name','warehouse_sale','warehouse_purchase','warehouse_expense'))->render();
+        }
     }
 }
