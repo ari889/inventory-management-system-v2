@@ -75,7 +75,7 @@
 
             function daily_report(warehouse_id, year) {
                 $.ajax({
-                    url: "{{ url('monthly-purchase-report') }}",
+                    url: "{{ url('monthly-sale-report') }}",
                     type: "POST",
                     data: {
                         warehouse_id: warehouse_id,

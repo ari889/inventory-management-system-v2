@@ -59,27 +59,30 @@
 
             $(document).on('click', '.previous', function() {
                 var year = $('#prev_year').val();
+                var month = $('#prev_month').val();
                 var warehouse_id = $('#warehouse_id option:selected').val();
-                daily_report(warehouse_id, year);
+                daily_report(warehouse_id, year, month);
             });
             $(document).on('click', '.next', function() {
                 var year = $('#next_year').val();
+                var month = $('#next_month').val();
                 var warehouse_id = $('#warehouse_id option:selected').val();
-                daily_report(warehouse_id, year);
+                daily_report(warehouse_id, year, month);
             });
 
             $('#warehouse_id').change(function() {
                 var warehouse_id = $('#warehouse_id option:selected').val();
-                daily_report(warehouse_id, year = '{{ date('Y') }}');
+                daily_report(warehouse_id, year = '{{ date('Y') }}', date = '{{ date('m') }}');
             });
 
-            function daily_report(warehouse_id, year) {
+            function daily_report(warehouse_id, year, month) {
                 $.ajax({
-                    url: "{{ url('monthly-purchase-report') }}",
+                    url: "{{ url('daily-sale-report') }}",
                     type: "POST",
                     data: {
                         warehouse_id: warehouse_id,
                         year: year,
+                        month: month,
                         _token: _token
                     },
                     success: function(data) {
