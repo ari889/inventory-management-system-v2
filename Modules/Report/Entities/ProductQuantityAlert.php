@@ -84,7 +84,7 @@ class ProductQuantityAlert extends BaseModel
     {
         $query = $this->get_datatable_query();
         if ($this->lengthVlaue != -1) {
-            $query->offset($this->startVlaue)->limit($this->lengthVlaue);
+            $query->offset($this->startValue)->limit($this->lengthValue);
         }
         return $query->get();
     }

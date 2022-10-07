@@ -9,7 +9,7 @@ use Modules\Category\Entities\Category;
 use Modules\Base\Http\Controllers\BaseController;
 use Modules\Report\Entities\ProductQuantityAlert;
 
-class ProductQuantityController extends BaseController
+class ProductQuantityAlertController extends BaseController
 {
     public function __construct(ProductQuantityAlert $model)
     {
