@@ -19,6 +19,9 @@ Route::group(['middleware' => ['auth']], function(){
     // dashboard route
     Route::get('/', 'HomeController@index')->name('dashboard');
     Route::get('unauthorized', 'HomeController@unauthorized')->name('unauthorized');
+    Route::get('my-profile', 'MyProfileController@index')->name('my.profile');
+    Route::post('update-profile', 'MyProfileController@updateProfile')->name('update.profile');
+    Route::post('update-password', 'MyProfileController@updatePassword')->name('update.password');
 
     // menu route
     Route::get('menu', 'MenuController@index')->name('menu');
