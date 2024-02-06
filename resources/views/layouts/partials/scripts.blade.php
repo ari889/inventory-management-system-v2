@@ -2,7 +2,6 @@
 <script src="assets/js/bootstrap.bundle.min.js"></script>
 <script src="assets/plugins/simplebar/js/simplebar.min.js"></script>
 <script src="assets/plugins/metismenu/js/metisMenu.min.js"></script>
-<script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
 <script src="assets/plugins/vectormap/jquery-jvectormap-2.0.2.min.js"></script>
 <script src="assets/plugins/vectormap/jquery-jvectormap-world-mill-en.js"></script>
 <script src="assets/plugins/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
@@ -12,6 +11,7 @@
 <script src="js/bootstrap-select.min.js"></script>
 <script src="js/datatables.bundle.js"></script>
 <script src="js/custom.js"></script>
+<script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
 <script>
     $(function () {
         $(".knob").knob();

@@ -2,12 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Menu;
 use App\Models\Module;
 use App\Models\Permission;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\AliasLoader;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 
@@ -38,7 +36,7 @@ class MenuServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if(Auth::check()){
+        if(auth()->check()){
             $role_id = auth()->user()->role_id;
 
             $menus = Menu::doesntHave('parent')
